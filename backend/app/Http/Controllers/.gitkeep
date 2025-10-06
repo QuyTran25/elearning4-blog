@@ -1,0 +1,12 @@
+# This directory contains API controllers for the blog application
+# 
+# Purpose: Store controller classes that handle HTTP requests and responses
+# Examples: BlogController.php, UserController.php, AuthController.php, CommentController.php
+#
+# Controllers handle:
+# - Blog post CRUD operations
+# - User authentication and management  
+# - Comment management
+# - API endpoints and routing logic
+#
+# This file ensures the directory structure is preserved in git

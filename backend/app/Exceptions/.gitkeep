@@ -1,0 +1,6 @@
+# This directory contains custom exception classes for the application
+# 
+# Purpose: Store custom exception handlers and exception classes
+# Examples: ValidationException.php, ApiException.php, CustomNotFoundException.php
+#
+# This file ensures the directory structure is preserved in git

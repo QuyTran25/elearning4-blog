@@ -1,0 +1,15 @@
+/* This directory contains CSS stylesheets for the blog frontend
+ *
+ * Purpose: Store CSS files for styling the blog interface
+ * Examples: main.css, blog.css, responsive.css, theme.css
+ *
+ * Styles for:
+ * - Blog layout and typography
+ * - Responsive design for mobile/tablet
+ * - Theme colors and branding
+ * - Component-specific styles
+ * - Animation and transitions
+ * - Print styles
+ *
+ * This file ensures the directory structure is preserved in git
+ */

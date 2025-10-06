@@ -1,0 +1,17 @@
+# This directory contains storage for application files
+# 
+# Purpose: Store uploaded files, logs, cache, and temporary files
+# Subdirectories may include:
+# - uploads/ (user uploaded images and files)
+# - logs/ (application log files)
+# - cache/ (cached data and templates)
+# - temp/ (temporary files)
+#
+# Storage handles:
+# - Blog post images and media files
+# - User profile pictures
+# - Application logs and error tracking
+# - Cached content for performance
+# - Temporary file processing
+#
+# This file ensures the directory structure is preserved in git
