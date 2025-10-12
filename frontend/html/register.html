@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng ký</title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="../css/login_register.css">
+
+  <!-- Font Google -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</head>
+
+<body class="auth-page">
+  <div class="auth-container">
+    <h2>Tạo tài khoản</h2>
+
+    <form id="registerForm">
+      <!-- Ô Email -->
+      <div class="input-group">
+        <i class="fa-solid fa-envelope input-icon"></i>
+        <input type="email" id="email" placeholder="Email" required>
+      </div>
+
+      <!-- Ô Mật khẩu -->
+      <div class="input-group">
+        <i class="fa-solid fa-lock input-icon"></i>
+        <input type="password" id="password" placeholder="Mật khẩu" required>
+        <i class="fa-solid fa-eye toggle-password" id="togglePassword"></i>
+      </div>
+
+      <!-- Thanh đo độ mạnh mật khẩu -->
+      <div class="password-strength">
+        <div class="password-strength-bar" id="strengthBar"></div>
+      </div>
+      <div class="strength-text" id="strengthText"></div>
+
+      <!-- Ô Xác nhận mật khẩu -->
+      <div class="input-group">
+        <i class="fa-solid fa-lock input-icon"></i>
+        <input type="password" id="confirmPassword" placeholder="Xác nhận mật khẩu" required>
+        <i class="fa-solid fa-eye toggle-password" id="toggleConfirmPassword"></i>
+      </div>
+
+      <!-- Nút đăng ký -->
+      <button type="submit">
+        <i class="fa-solid fa-user-plus"></i> Đăng ký
+      </button>
+    </form>
+
+    <p>Đã có tài khoản? <a href="login.html">Đăng nhập</a></p>
+    <a href="index.html" class="back-home">← Quay lại trang chủ</a>
+  </div>
+
+  <script src="../js/register.js"></script>
+</body>
+</html>

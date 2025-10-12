@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng nhập</title>
+
+  <!-- CSS chính -->
+  <link rel="stylesheet" href="../css/login_register.css">
+
+  <!-- Font Google -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome cho icon -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body class="auth-page">
+  <div class="auth-container">
+    <h2>Đăng nhập</h2>
+
+    <form id="loginForm">
+      <!-- Ô Email -->
+      <div class="input-group">
+        <i class="fa-solid fa-envelope input-icon"></i>
+        <input type="email" id="email" placeholder="Email" required>
+      </div>
+
+      <!-- Ô Mật khẩu -->
+      <div class="input-group">
+        <i class="fa-solid fa-lock input-icon"></i>
+        <input type="password" id="password" placeholder="Mật khẩu" required>
+        <i class="fa-solid fa-eye toggle-password" id="togglePassword"></i>
+      </div>
+
+
+      <!-- Ghi nhớ + Quên mật khẩu -->
+      <div class="form-options">
+        <label class="remember-me">
+          <input type="checkbox" id="remember">
+          <span class="checkmark"></span>
+            Ghi nhớ đăng nhập
+        </label>
+        <a href="#" class="forgot-password">Quên mật khẩu?</a>
+      </div>
+
+      <!-- Nút đăng nhập -->
+      <button type="submit">
+        <i class="fa-solid fa-right-to-bracket"></i> Đăng nhập
+      </button>
+    </form>
+
+    <!-- Đăng nhập mạng xã hội -->
+    <div class="social-login">
+      <p>Hoặc đăng nhập bằng</p>
+      <div class="social-buttons">
+        <div class="social-btn google"><i class="fab fa-google"></i> Google</div>
+        <div class="social-btn github"><i class="fab fa-github"></i> GitHub</div>
+        <div class="social-btn facebook"><i class="fab fa-facebook"></i> Facebook</div>
+      </div>
+    </div>
+
+    <p>Chưa có tài khoản? <a href="register.html">Đăng ký</a></p>
+    <a href="index.html" class="back-home">← Quay lại trang chủ</a>
+  </div>
+
+
+  <script src="../js/login.js"></script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog Công Nghệ</title>
+  <link rel="stylesheet" href="../css/index.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/a2e0e6f50b.js" crossorigin="anonymous"></script>
+  
+</head>
+<body>
+  
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h2 class="logo"><i class="fa-solid fa-code"></i> Blog công nghệ</h2>
+    <nav>
+      <a href="#" class="active"><i class="fa-solid fa-layer-group"></i> Tất cả</a>
+      <a href="#"><i class="fa-solid fa-brain"></i> AI / ML</a>
+      <a href="#"><i class="fa-solid fa-globe"></i> Web</a>
+      <a href="#"><i class="fa-solid fa-mobile-screen-button"></i> Mobile</a>
+      <a href="#"><i class="fa-solid fa-shield-halved"></i> Security</a>
+      <a href="#"><i class="fa-solid fa-user-tie"></i> Career</a>
+    </nav>
+  </aside>
+
+  <!-- Main -->
+  <div class="main">
+    <!-- Header -->
+    <header class="topbar">
+      <div class="search-box">
+        <input type="text" placeholder="Tìm kiếm bài viết...">
+      </div>
+      <div class="actions">
+        <button class="btn green" id="create-post-btn">
+          <i class="fa-solid fa-pen"></i> Tạo bài viết
+        </button>
+
+        <!-- Các nút tài khoản -->
+        <button class="btn red" id="logout-btn" style="display:none;">
+          <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+        </button>
+        <button class="btn blue" id="login-btn" onclick="window.location.href='login.html'">
+          <i class="fa-solid fa-user"></i> Đăng nhập
+        </button>
+        <button class="btn blue" id="register-btn" onclick="window.location.href='register.html'">
+          <i class="fa-solid fa-user-plus"></i> Đăng ký
+        </button>
+      </div>
+    </header>
+
+    <hr class="divider">
+
+    <!-- Featured Section -->
+    <section class="featured">
+      <div class="featured-left">
+        <img src="https://images.viblo.asia/00157776-1f73-4a3c-9ff0-436c2d098463.png" alt="code">
+        <div class="featured-text">
+          <h1>Kết nối Realtime với WebSocket</h1>
+          <p>Khám phá cách WebSocket giúp kết nối giữa client và server trong ứng dụng hiện đại.</p>
+          <span>Chủ đề: <b>Web</b> • Ngày: 05/10/2025</span>
+        </div>
+      </div>
+
+      <div class="featured-right">
+        <div class="mini-card">
+          <h3>AI trong Lập trình</h3>
+          <p>AI giúp tự động hóa quy trình phát triển phần mềm và tối ưu năng suất.</p>
+        </div>
+        <div class="mini-card">
+          <h3>Học sâu và Mạng nơ-ron</h3>
+          <p>Hiểu cách các mô hình deep learning đang thay đổi thế giới công nghệ.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Post List -->
+    <section class="post-list">
+      <div class="post-card">
+        <img src="https://www.nait.vn/uploads/news/2023/01/bm-cds.jpeg" alt="post">
+        <div class="post-content">
+          <h2>Bảo mật mạng trong thời đại số</h2>
+          <p>Phân tích các nguy cơ bảo mật phổ biến và cách bảo vệ dữ liệu doanh nghiệp.</p>
+          <span>Chủ đề: <b>Security</b> • 03/10/2025</span>
+        </div>
+      </div>
+
+      <div class="post-card">
+        <img src="https://funix.edu.vn/wp-content/uploads/2023/08/hoc-lap-trinh-back-end-1.jpg" alt="post">
+        <div class="post-content">
+          <h2>Dev Career: Học gì để trở thành Backend Developer</h2>
+          <p>Các kỹ năng và công nghệ quan trọng để bắt đầu hành trình lập trình backend.</p>
+          <span>Chủ đề: <b>Career</b> • 01/10/2025</span>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Blog Detail (ẩn mặc định) -->
+  <section id="blog-detail" style="display:none;" class="blog-detail">
+    <button id="back-to-list" class="btn back-btn">⬅ Quay lại danh sách</button>
+    <div class="detail-content">
+      <img id="detail-image" alt="Hình bài viết">
+      <h2 id="detail-title"></h2>
+      <p id="detail-body"></p>
+      <span id="detail-meta"></span>
+    </div>
+  </section>
+
+  <script src="../js/index.js"></script>
+</body>
+</html>

@@ -1,0 +1,293 @@
+/* Điều kiện hiển thị theo trạng thái đăng nhập */
+.logout-btn { display: none; }
+body.logged-in .logout-btn { display: flex; }
+body.logged-in .login-btn,
+body.logged-in .signup-btn { display: none; }
+
+/* ===== Form Login/Register ===== */
+.container {
+  max-width: 400px;
+  margin: 100px auto;
+  background: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.container h2 {
+  margin-bottom: 20px;
+  color: #f48024;
+}
+
+.container form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.container input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.container button {
+  background: #f48024;
+  color: #fff;
+  border: none;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.container button:hover {
+  background: #e06e0f;
+}
+
+
+/*login*/
+    body.auth-page {
+      background: linear-gradient(135deg, #f48024 0%, #f8a24d 50%, #ede2d7 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: "Inter", sans-serif;
+      color: #333;
+    }
+
+    .auth-container {
+      background: #ffffff;
+      width: 400px;
+      padding: 40px 35px;
+      border-radius: 16px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      text-align: center;
+      animation: fadeIn 0.4s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .auth-container h2 {
+      color: #f48024;
+      font-weight: 700;
+      margin-bottom: 25px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    /* Ô nhập liệu có icon */
+.input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 12px;
+  color: #888;
+  font-size: 16px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 12px 45px 12px 45px; /* đủ khoảng trống hai bên */
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  background-color: #f9fbfd;
+  font-size: 15px;
+  outline: none;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+.input-group input:focus {
+  border-color: #f48024;
+  box-shadow: 0 0 0 2px rgba(244, 128, 36, 0.2);
+}
+
+.toggle-password {
+  position: absolute;
+  right: 12px;
+  cursor: pointer;
+  color: #888;
+  transition: color 0.2s;
+}
+
+.toggle-password:hover {
+  color: #222;
+}
+
+
+    button {
+      background-color: #f48024;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 12px;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.25s;
+    }
+
+    button:hover {
+      background-color: #d86f1e;
+    }
+
+    .social-login {
+      margin-top: 20px;
+    }
+
+    .social-login p {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 10px;
+    }
+
+    .social-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .social-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .social-btn i {
+      font-size: 18px;
+    }
+
+    .social-btn.google { color: #db4437; border-color: #db4437; }
+    .social-btn.github { color: #333; border-color: #333; }
+    .social-btn.facebook { color: #1877f2; border-color: #1877f2; }
+
+    .social-btn:hover {
+      background-color: rgba(0,0,0,0.05);
+    }
+
+    p {
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    p a {
+      color: #f48024;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    p a:hover {
+      text-decoration: underline;
+    }
+
+    .back-home {
+      display: inline-block;
+      margin-top: 15px;
+      color: #555;
+      font-size: 14px;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .back-home:hover {
+      color: #f48024;
+    }
+
+
+
+    .social-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .social-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      background-color: #f9fbfd;
+      padding: 10px 14px;
+      font-weight: 600;
+      font-size: 15px;
+      cursor: pointer;
+      flex: 1;
+      transition: all 0.2s ease;
+    }
+
+    .social-btn:hover {
+      background-color: #f3f4f6;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .form-options {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      font-size: 14px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+
+    .sidebar nav a.active {
+      background-color: #fff4ea;
+      color: #f48024;
+      font-weight: 600;
+    }
+
+
+    body {
+  font-family: 'Inter', sans-serif;
+  background: #f5f6fa;
+  margin: 0;
+  padding: 0;
+}
+
+
+    /* Thanh đo độ mạnh mật khẩu */
+    .password-strength {
+      margin-top: 5px;
+      height: 6px;
+      border-radius: 4px;
+      background: #e0e0e0;
+      overflow: hidden;
+    }
+
+    .password-strength-bar {
+      height: 100%;
+      width: 0%;
+      transition: width 0.3s ease, background-color 0.3s ease;
+    }
+
+    .strength-text {
+      font-size: 13px;
+      margin-top: 3px;
+      text-align: right;
+    }
