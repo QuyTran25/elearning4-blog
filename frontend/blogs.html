@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh sách bài viết - Tech Blog</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1><a href="index.html">Tech Blog</a></h1>
+            </div>
+            <div class="mobile-menu-toggle" id="mobileMenuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="nav-menu" id="navMenu">
+                <a href="index.html" class="nav-link">🏠 Trang chủ</a>
+                <a href="blogs.html" class="nav-link active">📚 Bài viết</a>
+                <div id="authButtons">
+                    <a href="login.html" class="nav-link">🔑 Đăng nhập</a>
+                    <a href="register.html" class="btn btn-primary">✨ Đăng ký</a>
+                </div>
+                <div id="userMenu" style="display: none;">
+                    <a href="create-blog.html" class="btn btn-primary">✏️ Viết bài</a>
+                    <span id="userName" class="user-name"></span>
+                    <button id="logoutBtn" class="btn btn-secondary">🚪 Đăng xuất</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="blogs-header">
+            <div class="fade-in-up">
+                <h2>📚 Tất cả bài viết</h2>
+                <p class="text-secondary mb-3">Khám phá kho tàng kiến thức từ cộng đồng lập trình viên</p>
+            </div>
+            
+            <div class="blog-controls fade-in-up">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Tìm kiếm bài viết...">
+                    <button id="searchBtn" class="btn btn-secondary btn-small">🔍 Tìm</button>
+                </div>
+                
+                <div class="filter-controls">
+                    <div class="sort-box">
+                        <label for="sortSelect">📊 Sắp xếp:</label>
+                        <select id="sortSelect">
+                            <option value="newest">⏰ Mới nhất</option>
+                            <option value="oldest">📅 Cũ nhất</option>
+                            <option value="title">🔤 Tiêu đề A-Z</option>
+                            <option value="popular">🔥 Phổ biến</option>
+                        </select>
+                    </div>
+                    
+                    <div class="category-filter">
+                        <label for="categorySelect">🏷️ Danh mục:</label>
+                        <select id="categorySelect">
+                            <option value="">Tất cả</option>
+                            <option value="javascript">JavaScript</option>
+                            <option value="python">Python</option>
+                            <option value="react">React</option>
+                            <option value="nodejs">Node.js</option>
+                            <option value="css">CSS</option>
+                            <option value="web-development">Web Development</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loadingState" class="text-center hidden">
+            <div class="loading-spinner">
+                <div class="spinner"></div>
+                <p>Đang tải bài viết...</p>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="text-center hidden">
+            <div class="empty-state">
+                <div style="font-size: 4rem;">📝</div>
+                <h3>Chưa có bài viết nào</h3>
+                <p>Hãy là người đầu tiên chia sẻ kiến thức của bạn!</p>
+                <a href="create-blog.html" class="btn btn-primary">✍️ Viết bài đầu tiên</a>
+            </div>
+        </div>
+
+        <!-- Blog Grid -->
+        <div id="blogsContainer" class="blog-grid"></div>
+
+        <!-- Load More Button -->
+        <div class="text-center mt-3" id="loadMoreContainer" style="display: none;">
+            <button id="loadMoreBtn" class="btn btn-outline btn-large">📖 Xem thêm bài viết</button>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer"></div>
+        <div id="noBlogsMessage" class="no-blogs" style="display: none;">
+            <p>Không tìm thấy bài viết nào.</p>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/blogs.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

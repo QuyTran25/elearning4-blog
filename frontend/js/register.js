@@ -1,78 +1,176 @@
+document.addEventListener("DOMContentLoaded", () => {
+  // Redirect if already logged in
+  if (getCurrentUser()) {
+    window.location.href = "index.html";
+    return;
+  }
 
-    const registerForm = document.getElementById("registerForm");
-    const emailInput = document.getElementById("email");
-    const passwordInput = document.getElementById("password");
-    const confirmInput = document.getElementById("confirmPassword");
-    const strengthBar = document.getElementById("strengthBar");
-    const strengthText = document.getElementById("strengthText");
+  const registerForm = document.getElementById("registerForm");
+  const errorMessage = document.getElementById("errorMessage");
+  const fullNameInput = document.getElementById("fullName");
+  const emailInput = document.getElementById("email");
+  const passwordInput = document.getElementById("password");
+  const confirmPasswordInput = document.getElementById("confirmPassword");
+  const agreeTermsCheckbox = document.getElementById("agreeTerms");
+  const passwordStrength = document.getElementById("passwordStrength");
 
-    // === 1️⃣ Ẩn/hiện mật khẩu ===
-    document.querySelectorAll(".toggle-password").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const input = btn.previousElementSibling;
-        const isHidden = input.type === "password";
-        input.type = isHidden ? "text" : "password";
-        btn.classList.toggle("fa-eye");
-        btn.classList.toggle("fa-eye-slash");
-      });
+  // Password strength checker
+  function checkPasswordStrength(password) {
+    let strength = 0;
+    let feedback = [];
+    
+    if (password.length >= 6) strength += 1;
+    else feedback.push("ít nhất 6 ký tự");
+    
+    if (/[a-z]/.test(password)) strength += 1;
+    else feedback.push("chữ thường");
+    
+    if (/[A-Z]/.test(password)) strength += 1;
+    else feedback.push("chữ hoa");
+    
+    if (/[0-9]/.test(password)) strength += 1;
+    else feedback.push("số");
+    
+    if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+    else feedback.push("ký tự đặc biệt");
+    
+    return { strength, feedback };
+  }
+
+  function updatePasswordStrength(password) {
+    if (!password) {
+      passwordStrength.innerHTML = '';
+      return;
+    }
+
+    const { strength, feedback } = checkPasswordStrength(password);
+    let strengthText = '';
+    let strengthClass = '';
+    
+    if (strength < 2) {
+      strengthText = '🔴 Yếu';
+      strengthClass = 'weak';
+    } else if (strength < 4) {
+      strengthText = '🟡 Trung bình';
+      strengthClass = 'medium';
+    } else {
+      strengthText = '🟢 Mạnh';
+      strengthClass = 'strong';
+    }
+    
+    const missingText = feedback.length > 0 ? 
+      `<br><small>Cần: ${feedback.join(', ')}</small>` : '';
+    
+    passwordStrength.innerHTML = `
+      <div class="password-strength ${strengthClass}">
+        ${strengthText}${missingText}
+        <div class="strength-bar">
+          <div class="strength-fill ${strengthClass}"></div>
+        </div>
+      </div>
+    `;
+  }
+
+  // Clear errors when typing
+  [fullNameInput, emailInput, passwordInput, confirmPasswordInput].forEach(input => {
+    input?.addEventListener('input', () => {
+      FormValidator.clearFieldError(input.id);
+      errorMessage.textContent = '';
+      
+      if (input === passwordInput) {
+        updatePasswordStrength(input.value);
+      }
     });
+  });
 
-    // === 2️⃣ Tính độ mạnh của mật khẩu ===
-    passwordInput.addEventListener("input", () => {
-      const val = passwordInput.value;
-      let strength = 0;
+  // Handle form submission
+  registerForm?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    
+    // Clear previous errors
+    FormValidator.clearAllErrors();
+    errorMessage.textContent = '';
 
-      if (val.length >= 6) strength++;
-      if (/[A-Z]/.test(val)) strength++;
-      if (/[0-9]/.test(val)) strength++;
-      if (/[^A-Za-z0-9]/.test(val)) strength++;
+    const fullName = fullNameInput.value.trim();
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
+    const confirmPassword = confirmPasswordInput.value;
+    const agreeTerms = agreeTermsCheckbox?.checked;
 
-      let width = (strength / 4) * 100;
-      strengthBar.style.width = width + "%";
+    // Validation
+    let hasError = false;
 
-      if (strength <= 1) {
-        strengthBar.style.background = "#e74c3c";
-        strengthText.textContent = "Yếu";
-        strengthText.style.color = "#e74c3c";
-      } else if (strength === 2) {
-        strengthBar.style.background = "#f1c40f";
-        strengthText.textContent = "Trung bình";
-        strengthText.style.color = "#f1c40f";
+    if (!fullName) {
+      FormValidator.showFieldError('fullName', 'Vui lòng nhập họ và tên');
+      hasError = true;
+    } else if (fullName.length < 2) {
+      FormValidator.showFieldError('fullName', 'Họ và tên phải có ít nhất 2 ký tự');
+      hasError = true;
+    }
+
+    if (!email) {
+      FormValidator.showFieldError('email', 'Vui lòng nhập email');
+      hasError = true;
+    } else if (!FormValidator.isValidEmail(email)) {
+      FormValidator.showFieldError('email', 'Định dạng email không hợp lệ');
+      hasError = true;
+    }
+
+    if (!password) {
+      FormValidator.showFieldError('password', 'Vui lòng nhập mật khẩu');
+      hasError = true;
+    } else if (password.length < 6) {
+      FormValidator.showFieldError('password', 'Mật khẩu phải có ít nhất 6 ký tự');
+      hasError = true;
+    }
+
+    if (!confirmPassword) {
+      FormValidator.showFieldError('confirmPassword', 'Vui lòng xác nhận mật khẩu');
+      hasError = true;
+    } else if (password !== confirmPassword) {
+      FormValidator.showFieldError('confirmPassword', 'Mật khẩu xác nhận không khớp');
+      hasError = true;
+    }
+
+    if (!agreeTerms) {
+      toast.error('Vui lòng đồng ý với điều khoản sử dụng');
+      hasError = true;
+    }
+
+    if (hasError) {
+      return;
+    }
+
+    // Show loading state
+    setButtonLoading('registerForm', true);
+    
+    try {
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      const result = registerUser({ fullName, email, password });
+
+      if (result.success) {
+        // Auto login after successful registration
+        setCurrentUser(result.user);
+        
+        toast.success(`Chào mừng ${fullName}! Đăng ký thành công.`);
+        
+        // Redirect after short delay
+        setTimeout(() => {
+          window.location.href = "index.html";
+        }, 2000);
+        
       } else {
-        strengthBar.style.background = "#2ecc71";
-        strengthText.textContent = "Mạnh";
-        strengthText.style.color = "#2ecc71";
+        errorMessage.textContent = result.message;
+        toast.error(result.message);
       }
-    });
-
-    // === 3️⃣ Khi nhấn Đăng ký ===
-    registerForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-
-      const email = emailInput.value.trim();
-      const password = passwordInput.value.trim();
-      const confirm = confirmInput.value.trim();
-
-      if (password !== confirm) {
-        alert("Mật khẩu xác nhận không khớp!");
-        return;
-      }
-
-      // Lấy danh sách người dùng
-      const users = JSON.parse(localStorage.getItem("users") || "[]");
-
-      // Kiểm tra email đã tồn tại
-      const exists = users.find(u => u.email === email);
-      if (exists) {
-        alert("Email này đã được đăng ký!");
-        return;
-      }
-
-      // Thêm người dùng mới
-      users.push({ email, password });
-      localStorage.setItem("users", JSON.stringify(users));
-
-      alert("Đăng ký thành công! Hãy đăng nhập để tiếp tục.");
-      window.location.href = "login.html";
-    });
-  
+    } catch (error) {
+      console.error('Registration error:', error);
+      errorMessage.textContent = 'Có lỗi xảy ra. Vui lòng thử lại.';
+      toast.error('Có lỗi xảy ra. Vui lòng thử lại.');
+    } finally {
+      setButtonLoading('registerForm', false);
+    }
+  });
+});
