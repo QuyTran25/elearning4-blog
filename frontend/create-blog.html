@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tạo bài viết - Tech Blog</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1><a href="index.html">Tech Blog</a></h1>
+            </div>
+            <div class="mobile-menu-toggle" id="mobileMenuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="nav-menu" id="navMenu">
+                <a href="index.html" class="nav-link">🏠 Trang chủ</a>
+                <a href="blogs.html" class="nav-link">📚 Bài viết</a>
+                <div id="authButtons">
+                    <a href="login.html" class="nav-link">🔑 Đăng nhập</a>
+                    <a href="register.html" class="btn btn-primary">✨ Đăng ký</a>
+                </div>
+                <div id="userMenu" style="display: none;">
+                    <span id="userName" class="user-name"></span>
+                    <button id="logoutBtn" class="btn btn-secondary">🚪 Đăng xuất</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="blog-form-container fade-in-up">
+            <div class="form-header">
+                <h2 id="formTitle">✍️ Tạo bài viết mới</h2>
+                <p class="form-subtitle">Chia sẻ kiến thức và kinh nghiệm của bạn với cộng đồng</p>
+            </div>
+            
+            <form id="blogForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="title">📝 Tiêu đề bài viết *</label>
+                        <input type="text" id="title" name="title" required placeholder="Nhập tiêu đề hấp dẫn cho bài viết...">
+                        <div class="title-counter">
+                            <span id="titleCount">0</span>/100 ký tự
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category">🏷️ Danh mục *</label>
+                        <select id="category" name="category" required>
+                            <option value="">Chọn danh mục</option>
+                            <option value="javascript">🟡 JavaScript</option>
+                            <option value="python">🐍 Python</option>
+                            <option value="react">⚛️ React</option>
+                            <option value="nodejs">🟢 Node.js</option>
+                            <option value="css">🎨 CSS</option>
+                            <option value="web-development">🌐 Web Development</option>
+                            <option value="mobile-development">📱 Mobile Development</option>
+                            <option value="devops">🔧 DevOps</option>
+                            <option value="ai-ml">🤖 AI/ML</option>
+                            <option value="database">💾 Database</option>
+                            <option value="tutorial">📚 Tutorial</option>
+                            <option value="tips-tricks">💡 Tips & Tricks</option>
+                            <option value="other">❓ Khác</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="summary">📄 Tóm tắt bài viết</label>
+                    <textarea id="summary" name="summary" rows="3" placeholder="Viết tóm tắt ngắn về nội dung bài viết (tùy chọn)..."></textarea>
+                    <div class="summary-counter">
+                        <span id="summaryCount">0</span>/200 ký tự
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="image">🖼️ Ảnh đại diện</label>
+                    <div class="image-upload-area" id="imageUploadArea">
+                        <input type="file" id="image" name="image" accept="image/*" hidden>
+                        <div class="upload-placeholder">
+                            <div class="upload-icon">📁</div>
+                            <p>Kéo thả ảnh vào đây hoặc <span class="upload-link">chọn file</span></p>
+                            <small>Hỗ trợ: JPG, PNG, GIF (tối đa 5MB)</small>
+                        </div>
+                        <div id="imagePreview" class="image-preview"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="tags">🏷️ Tags (phân cách bằng dấu phẩy)</label>
+                    <input type="text" id="tags" name="tags" placeholder="javascript, tutorial, beginner...">
+                    <div class="tags-preview" id="tagsPreview"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="content">📖 Nội dung bài viết *</label>
+                    <div class="editor-toolbar">
+                        <button type="button" class="toolbar-btn" data-action="bold" title="Đậm">🅱️</button>
+                        <button type="button" class="toolbar-btn" data-action="italic" title="Nghiêng">📰</button>
+                        <button type="button" class="toolbar-btn" data-action="code" title="Code">💻</button>
+                        <button type="button" class="toolbar-btn" data-action="link" title="Link">🔗</button>
+                        <button type="button" class="toolbar-btn" data-action="list" title="Danh sách">📋</button>
+                    </div>
+                    <textarea id="content" name="content" rows="20" required placeholder="Viết nội dung chi tiết của bài viết...
+
+💡 Một số gợi ý:
+- Sử dụng các heading (## Tiêu đề) để tổ chức nội dung
+- Thêm code examples với ```javascript
+- Sử dụng bullet points để liệt kê
+- Thêm links liên quan [text](url)
+- Viết rõ ràng, dễ hiểu cho người đọc"></textarea>
+                    <div class="content-counter">
+                        <span id="contentCount">0</span> ký tự | Đọc khoảng <span id="readingTime">0</span> phút
+                    </div>
+                </div>
+
+                <div id="errorMessage" class="error-message"></div>
+
+                                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary btn-large">
+                        <span id="publishBtnText">🚀 Xuất bản bài viết</span>
+                        <span id="publishBtnLoading" class="loading hidden"></span>
+                    </button>
+                    <button type="button" class="btn btn-outline" id="saveDraftBtn">💾 Lưu nháp</button>
+                    <button type="button" class="btn btn-outline" id="previewBtn">👀 Xem trước</button>
+                    <a href="blogs.html" class="btn btn-secondary">❌ Hủy</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Preview Modal -->
+    <div id="previewModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>👀 Xem trước bài viết</h3>
+                <button class="modal-close" id="closePreview">&times;</button>
+            </div>
+            <div class="modal-body">
+                <article class="blog-preview">
+                    <div class="blog-preview-meta">
+                        <span class="blog-category" id="previewCategory"></span>
+                        <span class="blog-date">Hôm nay</span>
+                    </div>
+                    <h1 id="previewTitle"></h1>
+                    <p class="blog-summary" id="previewSummary"></p>
+                    <div class="blog-tags" id="previewTags"></div>
+                    <div class="blog-content" id="previewContent"></div>
+                </article>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer"></div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/blog-storage.js"></script>
+    <script src="js/create-blog.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/create-blog.js"></script>
+</body>
+</html>

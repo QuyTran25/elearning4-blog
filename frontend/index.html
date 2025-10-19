@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech Blog - Chia sẻ kiến thức công nghệ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <meta name="description" content="Blog chia sẻ kiến thức công nghệ, lập trình và kinh nghiệm phát triển phần mềm">
+    <meta name="keywords" content="blog công nghệ, lập trình, javascript, html, css, web development">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1><a href="index.html">Tech Blog</a></h1>
+            </div>
+            <div class="mobile-menu-toggle" id="mobileMenuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="nav-menu" id="navMenu">
+                <a href="index.html" class="nav-link active">🏠 Trang chủ</a>
+                <a href="blogs.html" class="nav-link">📚 Bài viết</a>
+                <div id="authButtons">
+                    <a href="login.html" class="nav-link">🔑 Đăng nhập</a>
+                    <a href="register.html" class="btn btn-primary">✨ Đăng ký</a>
+                </div>
+                <div id="userMenu" style="display: none;">
+                    <a href="create-blog.html" class="btn btn-primary">✏️ Viết bài</a>
+                    <span id="userName" class="user-name"></span>
+                    <button id="logoutBtn" class="btn btn-secondary">🚪 Đăng xuất</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="container">
+            <div class="fade-in-up">
+                <h2>🚀 Chia sẻ kiến thức công nghệ</h2>
+                <p>Nơi các lập trình viên chia sẻ kinh nghiệm, học hỏi và phát triển cùng nhau trong hành trình công nghệ</p>
+                <div class="flex items-center justify-center gap-3 mt-3">
+                    <a href="blogs.html" class="btn btn-large">📖 Khám phá bài viết</a>
+                    <a href="register.html" class="btn btn-large btn-outline">🎯 Tham gia ngay</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="featured-blogs">
+        <div class="container">
+            <div class="text-center mb-3">
+                <h3>✨ Bài viết nổi bật</h3>
+                <p class="text-secondary">Khám phá những bài viết được yêu thích nhất từ cộng đồng</p>
+            </div>
+
+            <div class="blog-grid">
+                <div class="blog-card fade-in-up ai">
+                    <img src="image/AI.jpg" alt="AI" class="blog-card-image" />
+                    <div class="blog-card-content">
+                        <span class="blog-card-category ai">AI</span>
+                        <h4 class="blog-card-title">AI giúp nhận diện hình ảnh</h4>
+                        <p class="blog-card-desc">Ứng dụng AI trong nhận diện khuôn mặt, vật thể và tự động phân loại ảnh.</p>
+                        <div class="blog-card-meta">
+                            <span>Tác giả: Minh Khoa</span> · <span>14/10/2025</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="blog-card fade-in-up fullstack">
+                    <img src="image/học fullstacsk.jpg" alt="Fullstack" class="blog-card-image" />
+                    <div class="blog-card-content">
+                        <span class="blog-card-category fullstack">Fullstack</span>
+                        <h4 class="blog-card-title">Lộ trình học lập trình web</h4>
+                        <p class="blog-card-desc">Các bước cơ bản để trở thành lập trình viên fullstack: HTML, CSS, JS, backend và DevOps.</p>
+                        <div class="blog-card-meta">
+                            <span>Tác giả: Bảo Trâm</span> · <span>10/10/2025</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="blog-card fade-in-up coding">
+                    <img src="image/mã code.jpg" alt="Coding" class="blog-card-image" />
+                    <div class="blog-card-content">
+                        <span class="blog-card-category coding">Coding</span>
+                        <h4 class="blog-card-title">5 mẹo code sạch cho người mới</h4>
+                        <p class="blog-card-desc">Đặt tên biến rõ ràng, chia nhỏ hàm, comment hợp lý và kiểm thử tự động.</p>
+                        <div class="blog-card-meta">
+                            <span>Tác giả: Hữu Phước</span> · <span>05/10/2025</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="blog-card fade-in-up network">
+                    <img src="image/mạng toàn cầu.jpg" alt="Global Network" class="blog-card-image" />
+                    <div class="blog-card-content">
+                        <span class="blog-card-category network">Network</span>
+                        <h4 class="blog-card-title">Internet of Things là gì?</h4>
+                        <p class="blog-card-desc">IoT kết nối thiết bị thông minh, giúp tự động hóa nhà cửa và sản xuất công nghiệp.</p>
+                        <div class="blog-card-meta">
+                            <span>Tác giả: Thanh Tùng</span> · <span>01/10/2025</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="blog-card fade-in-up ai">
+                    <img src="image/AI.jpg" alt="AI" class="blog-card-image" />
+                    <div class="blog-card-content">
+                        <span class="blog-card-category ai">AI</span>
+                        <h4 class="blog-card-title">Machine Learning cơ bản</h4>
+                        <p class="blog-card-desc">Giới thiệu về học máy, các thuật toán phổ biến và ứng dụng thực tế trong doanh nghiệp.</p>
+                        <div class="blog-card-meta">
+                            <span>Tác giả: Đức Anh</span> · <span>08/10/2025</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="blog-card fade-in-up fullstack">
+                    <img src="image/học fullstacsk.jpg" alt="Fullstack" class="blog-card-image" />
+                    <div class="blog-card-content">
+                        <span class="blog-card-category fullstack">Fullstack</span>
+                        <h4 class="blog-card-title">Node.js và Express cho backend</h4>
+                        <p class="blog-card-desc">Xây dựng RESTful API với Node.js, Express, kết nối database và authentication.</p>
+                        <div class="blog-card-meta">
+                            <span>Tác giả: Quang Huy</span> · <span>03/10/2025</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Công nghệ nổi bật -->
+    <section class="tech-images-section">
+        <div class="container">
+            <div class="text-center mb-3">
+                <h3>🌟 Công nghệ nổi bật</h3>
+                <p class="text-secondary">Khám phá các lĩnh vực công nghệ qua hình ảnh trực quan</p>
+            </div>
+            <div class="tech-image-grid">
+                <div class="tech-image-card fade-in-up" data-category="AI">
+                    <img src="image/AI.jpg" alt="AI" class="tech-img" />
+                    <div class="tech-img-title">Trí tuệ nhân tạo (AI)</div>
+                </div>
+                <div class="tech-image-card fade-in-up" data-category="Fullstack">
+                    <img src="image/học fullstacsk.jpg" alt="Fullstack" class="tech-img" />
+                    <div class="tech-img-title">Lập trình Fullstack</div>
+                </div>
+                <div class="tech-image-card fade-in-up" data-category="Coding">
+                    <img src="image/mã code.jpg" alt="Coding" class="tech-img" />
+                    <div class="tech-img-title">Mã nguồn & Coding</div>
+                </div>
+                <div class="tech-image-card fade-in-up" data-category="Network">
+                    <img src="image/mạng toàn cầu.jpg" alt="Global Network" class="tech-img" />
+                    <div class="tech-img-title">Mạng toàn cầu</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item fade-in-up">
+                    <div class="stat-number">100+</div>
+                    <div class="stat-label">Bài viết</div>
+                </div>
+                <div class="stat-item fade-in-up">
+                    <div class="stat-number">50+</div>
+                    <div class="stat-label">Tác giả</div>
+                </div>
+                <div class="stat-item fade-in-up">
+                    <div class="stat-number">1000+</div>
+                    <div class="stat-label">Lượt đọc</div>
+                </div>
+                <div class="stat-item fade-in-up">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Học tập</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Toast Container -->
+    <div id="toastContainer"></div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/blog-storage.js"></script>
+    <script src="js/home.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

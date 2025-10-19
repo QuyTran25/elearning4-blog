@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi tiết bài viết - Tech Blog</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1><a href="index.html">Tech Blog</a></h1>
+            </div>
+            <div class="nav-menu">
+                <a href="index.html" class="nav-link">Trang chủ</a>
+                <a href="blogs.html" class="nav-link">Bài viết</a>
+                <div id="authButtons">
+                    <a href="login.html" class="nav-link">Đăng nhập</a>
+                    <a href="register.html" class="btn btn-primary">Đăng ký</a>
+                </div>
+                <div id="userMenu" style="display: none;">
+                    <a href="create-blog.html" class="btn btn-primary">Viết bài</a>
+                    <span id="userName" class="user-name"></span>
+                    <button id="logoutBtn" class="btn btn-secondary">Đăng xuất</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="blog-detail-main">
+        <div class="container">
+            <div id="loadingState" class="text-center hidden">
+                <div class="loading-spinner">
+                    <div class="spinner"></div>
+                    <p>Đang tải bài viết...</p>
+                </div>
+            </div>
+            <div id="emptyState" class="text-center hidden">
+                <div class="empty-state">
+                    <div style="font-size: 4rem;">📝</div>
+                    <h3>Không tìm thấy bài viết</h3>
+                    <p>Bài viết này không tồn tại hoặc đã bị xóa.</p>
+                    <a href="blogs.html" class="btn btn-primary">Quay lại danh sách</a>
+                </div>
+            </div>
+            <div id="blogDetail" class="blog-detail-card"></div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-brand">Tech Blog</div>
+            <div class="footer-links">
+                <a href="index.html">Trang chủ</a> · <a href="blogs.html">Bài viết</a> · <a href="create-blog.html">Viết bài</a>
+            </div>
+            <div class="footer-info">© 2025 Tech Blog. All rights reserved.</div>
+        </div>
+    </footer>
+
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <h3>Xác nhận xóa</h3>
+            <p>Bạn có chắc chắn muốn xóa bài viết này?</p>
+            <div class="modal-actions">
+                <button id="confirmDelete" class="btn btn-danger">Xóa</button>
+                <button id="cancelDelete" class="btn btn-secondary">Hủy</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/blog-storage.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/blog-detail.js"></script>
+</body>
+</html>

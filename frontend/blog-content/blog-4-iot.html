@@ -1,0 +1,109 @@
+<style>
+  .blog-content-wrapper { max-width: 900px; margin: 0 auto; padding: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.8; color: #333; }
+  .blog-meta { display: flex; gap: 20px; margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 8px; font-size: 14px; }
+  .blog-meta span { color: #666; }
+  .blog-meta strong { color: #667eea; }
+  .blog-content-wrapper h2 { color: #2d3748; font-size: 32px; margin: 30px 0 20px; }
+  .blog-content-wrapper h3 { color: #4a5568; font-size: 24px; margin: 25px 0 15px; }
+  .blog-content-wrapper h4 { color: #718096; font-size: 20px; margin: 20px 0 10px; }
+  .blog-content-wrapper p { margin: 15px 0; }
+  .blog-content-wrapper ul, .blog-content-wrapper ol { margin: 15px 0; padding-left: 30px; }
+  .blog-content-wrapper li { margin: 8px 0; }
+  .blog-content-wrapper strong { color: #667eea; }
+  .blog-content-wrapper img { width: 100%; max-width: 600px; margin: 20px 0; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+  .blog-content-wrapper blockquote { background: #f5f7fa; padding: 20px; border-left: 4px solid #667eea; margin: 20px 0; font-style: italic; border-radius: 4px; }
+  .blog-content-wrapper code { background: #f4f4f4; padding: 2px 6px; border-radius: 3px; font-family: 'Courier New', monospace; color: #e83e8c; }
+</style>
+
+<div class="blog-content-wrapper">
+  <div class="blog-meta">
+    <span>👤 Tác giả: <strong>Thanh Tùng</strong></span>
+    <span>📅 Ngày đăng: <strong>1 tháng 10, 2025</strong></span>
+    <span>🏷️ Danh mục: <strong>Network</strong></span>
+  </div>
+
+  <h2>🌐 IoT - Kết Nối Vạn Vật Trên Internet</h2>
+  <p>Internet of Things (IoT) là mạng lưới các thiết bị vật lý được kết nối internet, có khả năng thu thập và chia sẻ dữ liệu. IoT đang thay đổi cách chúng ta sống và làm việc.</p>
+
+<img src="image/mạng toàn cầu.jpg" alt="IoT Network" style="width:100%; max-width:600px; margin:20px 0; border-radius:8px;">
+
+<h3>🏠 IoT Trong Smart Home</h3>
+<p>Ngôi nhà thông minh với các thiết bị IoT:</p>
+<ul>
+  <li><strong>Đèn thông minh:</strong> Philips Hue, Xiaomi - điều khiển từ xa, tự động bật/tắt theo lịch</li>
+  <li><strong>Thermostat:</strong> Nest, Ecobee tự điều chỉnh nhiệt độ tiết kiệm điện 20-30%</li>
+  <li><strong>Camera an ninh:</strong> Ring, Arlo - xem real-time, AI nhận diện người lạ</li>
+  <li><strong>Khóa cửa thông minh:</strong> August, Yale - mở khóa bằng smartphone, vân tay</li>
+  <li><strong>Loa thông minh:</strong> Alexa, Google Home - điều khiển giọng nói toàn bộ nhà</li>
+  <li><strong>Tủ lạnh thông minh:</strong> Samsung Family Hub - quản lý thực phẩm, đặt hàng online</li>
+</ul>
+
+<h3>🏭 IoT Trong Công Nghiệp 4.0</h3>
+<p>Industrial IoT (IIoT) đang cách mạng hóa sản xuất:</p>
+<ul>
+  <li><strong>Predictive Maintenance:</strong> Sensors phát hiện dấu hiệu hỏng hóc trước 2-4 tuần, giảm 30% downtime</li>
+  <li><strong>Supply Chain Management:</strong> Theo dõi real-time vị trí và tình trạng hàng hóa</li>
+  <li><strong>Quality Control:</strong> AI + IoT kiểm tra chất lượng sản phẩm tự động 100%</li>
+  <li><strong>Energy Management:</strong> Tối ưu hóa tiêu thụ năng lượng nhà máy, giảm 15-25% chi phí</li>
+  <li><strong>Worker Safety:</strong> Wearables theo dõi sức khỏe và vị trí công nhân real-time</li>
+</ul>
+
+<h3>⚙️ Kiến Trúc IoT</h3>
+<p>Một hệ thống IoT điển hình gồm 4 layers:</p>
+<ol>
+  <li><strong>Device Layer:</strong> Sensors (nhiệt độ, độ ẩm, chuyển động), actuators (động cơ, relay) thu thập dữ liệu</li>
+  <li><strong>Network Layer:</strong> WiFi, Bluetooth, LoRaWAN, 5G, NB-IoT truyền dữ liệu</li>
+  <li><strong>Platform Layer:</strong> Cloud (AWS IoT, Azure IoT Hub, Google Cloud IoT) xử lý, lưu trữ dữ liệu</li>
+  <li><strong>Application Layer:</strong> Mobile app, web dashboard hiển thị và điều khiển</li>
+</ol>
+
+<h3>💻 Giao Thức IoT Phổ Biến</h3>
+<ul>
+  <li><strong>MQTT:</strong> Lightweight, pub/sub messaging - chuẩn cho IoT</li>
+  <li><strong>CoAP:</strong> RESTful protocol cho thiết bị constrained</li>
+  <li><strong>HTTP/HTTPS:</strong> Quen thuộc, dễ implement nhưng heavy</li>
+  <li><strong>WebSocket:</strong> Real-time bidirectional communication</li>
+</ul>
+
+<h3>🔐 Bảo Mật IoT</h3>
+<p>IoT devices thường là target của hackers. Các biện pháp bảo mật:</p>
+<ul>
+  <li><strong>Authentication:</strong> Xác thực thiết bị trước khi kết nối - X.509 certificates</li>
+  <li><strong>Encryption:</strong> Mã hóa dữ liệu với TLS/SSL 1.2+</li>
+  <li><strong>Firmware Updates:</strong> OTA (Over-The-Air) updates bảo mật thường xuyên</li>
+  <li><strong>Network Segmentation:</strong> Tách IoT devices ra VLAN riêng</li>
+  <li><strong>Monitoring:</strong> Phát hiện hành vi bất thường với AI/ML</li>
+</ul>
+
+<blockquote style="background:#f5f7fa;padding:15px;border-left:4px solid #667eea;margin:20px 0;">
+  "By 2030, there will be over 125 billion IoT devices worldwide, transforming every aspect of our lives."
+</blockquote>
+
+<h3>🚀 Xu Hướng Tương Lai</h3>
+<ul>
+  <li><strong>5G Networks:</strong> Tốc độ 10Gbps, độ trễ <1ms - perfect cho IoT</li>
+  <li><strong>Edge Computing:</strong> Xử lý dữ liệu ngay tại thiết bị, giảm latency 70-90%</li>
+  <li><strong>AI Integration:</strong> IoT + AI = AIoT - thiết bị tự học và tối ưu hành vi</li>
+  <li><strong>Digital Twins:</strong> Mô phỏng số hóa của đối tượng vật lý</li>
+  <li><strong>Blockchain:</strong> Bảo mật giao dịch giữa các IoT devices</li>
+</ul>
+
+<h3>💡 Bắt Đầu Với IoT</h3>
+<p>Hardware phổ biến cho beginners:</p>
+<ul>
+  <li><strong>Arduino Uno:</strong> Dễ học, nhiều tutorials, giá ~200k VNĐ</li>
+  <li><strong>Raspberry Pi 4:</strong> Mạnh hơn, chạy Linux, giá ~1.5 triệu VNĐ</li>
+  <li><strong>ESP32/ESP8266:</strong> WiFi built-in, rất phổ biến, giá ~50-100k VNĐ</li>
+  <li><strong>Sensors:</strong> DHT11 (nhiệt độ/độ ẩm), HC-SR04 (khoảng cách), MQ-2 (khí gas)</li>
+</ul>
+
+<h3>📚 Tài Nguyên Học IoT</h3>
+<ul>
+  <li><strong>Courses:</strong> Coursera - Introduction to IoT, Udemy - Complete IoT Guide</li>
+  <li><strong>Books:</strong> "Getting Started with IoT" by Cuno Pfister</li>
+  <li><strong>Communities:</strong> Arduino Forum, Raspberry Pi Forum, r/IOT</li>
+  <li><strong>Projects:</strong> Hackster.io, Instructables, Arduino Project Hub</li>
+</ul>
+
+<p>Hãy bắt đầu dự án IoT đầu tiên của bạn ngay hôm nay! 🔧</p>
+</div>

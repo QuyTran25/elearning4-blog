@@ -1,0 +1,77 @@
+<style>
+  .blog-content-wrapper { max-width: 900px; margin: 0 auto; padding: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.8; color: #333; }
+  .blog-meta { display: flex; gap: 20px; margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 8px; font-size: 14px; }
+  .blog-meta span { color: #666; }
+  .blog-meta strong { color: #667eea; }
+  .blog-content-wrapper h2 { color: #2d3748; font-size: 32px; margin: 30px 0 20px; }
+  .blog-content-wrapper h3 { color: #4a5568; font-size: 24px; margin: 25px 0 15px; }
+  .blog-content-wrapper h4 { color: #718096; font-size: 20px; margin: 20px 0 10px; }
+  .blog-content-wrapper p { margin: 15px 0; }
+  .blog-content-wrapper ul, .blog-content-wrapper ol { margin: 15px 0; padding-left: 30px; }
+  .blog-content-wrapper li { margin: 8px 0; }
+  .blog-content-wrapper strong { color: #667eea; }
+  .blog-content-wrapper img { width: 100%; max-width: 600px; margin: 20px 0; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+  .blog-content-wrapper blockquote { background: #f5f7fa; padding: 20px; border-left: 4px solid #667eea; margin: 20px 0; font-style: italic; border-radius: 4px; }
+  .blog-content-wrapper code { background: #f4f4f4; padding: 2px 6px; border-radius: 3px; font-family: 'Courier New', monospace; color: #e83e8c; }
+</style>
+
+<div class="blog-content-wrapper">
+  <div class="blog-meta">
+    <span>👤 Tác giả: <strong>Hữu Phước</strong></span>
+    <span>📅 Ngày đăng: <strong>5 tháng 10, 2025</strong></span>
+    <span>🏷️ Danh mục: <strong>Coding</strong></span>
+  </div>
+
+  <h2>✨ Clean Code - Viết Code Như Một Nghệ Sĩ</h2>
+  <p>Code sạch không chỉ giúp bạn mà còn giúp cả team dễ đọc, dễ maintain và dễ mở rộng. Hãy cùng tìm hiểu 5 nguyên tắc cơ bản!</p>
+
+<img src="image/mã code.jpg" alt="Clean Code" style="width:100%; max-width:600px; margin:20px 0; border-radius:8px;">
+
+<h3>1️⃣ Đặt Tên Biến Rõ Ràng Và Có Ý Nghĩa</h3>
+<p>Tên biến nên thể hiện rõ mục đích và giá trị của nó. Thay vì dùng tên mơ hồ như <code>x</code>, <code>temp</code>, <code>data</code>, hãy dùng tên có ý nghĩa như <code>totalUsers</code>, <code>currentDate</code>, <code>userAverageScore</code>.</p>
+
+<h3>2️⃣ Chia Nhỏ Functions - Single Responsibility</h3>
+<p>Mỗi function chỉ nên làm một việc duy nhất. Function dài hơn 20 dòng thường là dấu hiệu cần refactor. Tách logic phức tạp thành nhiều function nhỏ, mỗi function có tên rõ ràng thể hiện chức năng của nó.</p>
+
+<h3>3️⃣ Comment Hợp Lý - Giải Thích "Tại Sao", Không Phải "Cái Gì"</h3>
+<p>Code tốt tự document chính nó. Comment chỉ nên giải thích:</p>
+<ul>
+  <li>WHY (tại sao): Lý do quyết định thiết kế, business logic đặc biệt</li>
+  <li>WHAT (cái gì): Chỉ khi logic thực sự phức tạp và khó hiểu</li>
+  <li>HOW (như thế nào): Tránh, thay vào đó viết code rõ ràng hơn</li>
+</ul>
+
+<h3>4️⃣ DRY - Don't Repeat Yourself</h3>
+<p>Nguyên tắc vàng trong lập trình: Tránh duplicate code bằng mọi giá. Mỗi lần bạn copy-paste code, hãy tự hỏi: "Có thể tạo một function/component reusable không?"</p>
+
+<h3>5️⃣ Viết Tests - Code Có Thể Tin Cậy</h3>
+<p>Tests không phải lãng phí thời gian, tests là đầu tư cho tương lai:</p>
+<ul>
+  <li>Unit tests: Test từng function riêng lẻ</li>
+  <li>Integration tests: Test các modules làm việc cùng nhau</li>
+  <li>E2E tests: Test flow người dùng từ đầu đến cuối</li>
+</ul>
+
+<blockquote style="background:#f5f7fa;padding:15px;border-left:4px solid #667eea;margin:20px 0;">
+  "Any fool can write code that a computer can understand. Good programmers write code that humans can understand." - Martin Fowler
+</blockquote>
+
+<h3>🎯 Lợi Ích Của Clean Code</h3>
+<ul>
+  <li><strong>Dễ maintain:</strong> Sửa bugs và thêm features nhanh hơn 2-3 lần</li>
+  <li><strong>Ít bugs:</strong> Code rõ ràng giảm 40-60% lỗi logic</li>
+  <li><strong>Team work tốt:</strong> Đồng đội dễ hiểu code của bạn</li>
+  <li><strong>Onboard nhanh:</strong> Người mới dễ tiếp cận codebase</li>
+  <li><strong>Refactor an toàn:</strong> Có tests để đảm bảo không break existing features</li>
+</ul>
+
+<h3>📚 Tài Liệu Tham Khảo</h3>
+<ul>
+  <li>"Clean Code" by Robert C. Martin - Bible của clean code</li>
+  <li>"The Pragmatic Programmer" by Andy Hunt & Dave Thomas</li>
+  <li>"Refactoring" by Martin Fowler - Cách cải thiện code hiện có</li>
+  <li>"Code Complete" by Steve McConnell</li>
+</ul>
+
+<p>Hãy bắt đầu áp dụng những nguyên tắc này vào code của bạn từ hôm nay! 💪</p>
+</div>

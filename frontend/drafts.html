@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bản nháp - Tech Blog</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1><a href="index.html">Tech Blog</a></h1>
+            </div>
+            <div class="mobile-menu-toggle" id="mobileMenuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="nav-menu" id="navMenu">
+                <a href="index.html" class="nav-link">🏠 Trang chủ</a>
+                <a href="blogs.html" class="nav-link">📚 Bài viết</a>
+                <div id="authButtons">
+                    <a href="login.html" class="nav-link">🔑 Đăng nhập</a>
+                    <a href="register.html" class="btn btn-primary">✨ Đăng ký</a>
+                </div>
+                <div id="userMenu" style="display: none;">
+                    <a href="create-blog.html" class="btn btn-primary">✏️ Viết bài</a>
+                    <span id="userName" class="user-name"></span>
+                    <button id="logoutBtn" class="btn btn-secondary">🚪 Đăng xuất</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="fade-in-up" style="margin: 50px 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                <div>
+                    <h2>💾 Bản nháp của tôi</h2>
+                    <p style="color: #666; margin-top: 10px;">Các bài viết chưa hoàn thành</p>
+                </div>
+                <a href="create-blog.html" class="btn btn-primary">✏️ Viết bài mới</a>
+            </div>
+
+            <div id="draftsContainer"></div>
+            <div id="noDrafts" style="display: none; text-align: center; padding: 80px 20px;">
+                <div style="font-size: 80px; margin-bottom: 20px;">📝</div>
+                <h3 style="color: #666;">Chưa có bản nháp nào</h3>
+                <p style="color: #999; margin: 15px 0;">Bắt đầu viết bài và hệ thống sẽ tự động lưu nháp cho bạn</p>
+                <a href="create-blog.html" class="btn btn-primary" style="margin-top: 20px;">✏️ Viết bài ngay</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/blog-storage.js"></script>
+    <script src="js/drafts.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
