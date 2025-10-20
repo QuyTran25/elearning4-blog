@@ -1,6 +1,0 @@
-# This directory contains helper functions and utility classes
-# 
-# Purpose: Store reusable helper functions, utility classes, and common functionality
-# Examples: StringHelper.php, DateHelper.php, ImageHelper.php, ValidationHelper.php
-#
-# This file ensures the directory structure is preserved in git
