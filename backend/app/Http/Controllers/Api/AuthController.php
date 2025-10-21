@@ -9,45 +9,74 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    public function register(Request $request)
-    {
-        $validated = $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:6'
-        ]);
-
-        $user = User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => Hash::make($validated['password'])
-        ]);
-
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        return response()->json(['user' => $user, 'token' => $token]);
-    }
-
+    /**
+     * Đăng nhập - CHỈ DÀNH CHO ADMIN
+     */
     public function login(Request $request)
     {
+        // Validate input
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required'
+        ]);
+
+        // Tìm user theo email
         $user = User::where('email', $request->email)->first();
 
+        // Kiểm tra user tồn tại và mật khẩu đúng
         if (!$user || !Hash::check($request->password, $user->password)) {
-            return response()->json(['message' => 'Email hoặc mật khẩu sai'], 401);
+            return response()->json([
+                'success' => false,
+                'message' => 'Email hoặc mật khẩu không đúng'
+            ], 401);
         }
 
+        // Kiểm tra PHẢI là admin
+        if ($user->role !== 'admin') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Chỉ admin mới được đăng nhập vào hệ thống'
+            ], 403);
+        }
+
+        // Tạo token
         $token = $user->createToken('auth_token')->plainTextToken;
-        return response()->json(['user' => $user, 'token' => $token]);
+        
+        // Trả về thông tin đầy đủ
+        return response()->json([
+            'success' => true,
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role
+            ],
+            'token' => $token
+        ]);
     }
 
+    /**
+     * Đăng xuất
+     */
     public function logout(Request $request)
     {
+        // Xóa tất cả tokens của user
         $request->user()->tokens()->delete();
-        return response()->json(['message' => 'Đăng xuất thành công']);
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Đăng xuất thành công'
+        ]);
     }
 
+    /**
+     * Lấy thông tin user hiện tại
+     */
     public function user(Request $request)
     {
-        return response()->json($request->user());
+        return response()->json([
+            'success' => true,
+            'user' => $request->user()
+        ]);
     }
 }

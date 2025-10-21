@@ -10,21 +10,13 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
+        // Tạo tài khoản Admin
         User::create([
-            'name' => 'Nguyen Van A',
-            'email' => 'a@example.com',
+            'name' => 'Administrator',
+            'email' => 'admin@example.com',
             'email_verified_at' => now(),
-            'password' => Hash::make('12345678'),
-            'remember_token' => null,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        User::create([
-            'name' => 'Tran Thi B',
-            'email' => 'b@example.com',
-            'email_verified_at' => now(),
-            'password' => Hash::make('87654321'),
+            'password' => Hash::make('admin123'),
+            'role' => 'admin',
             'remember_token' => null,
             'created_at' => now(),
             'updated_at' => now(),
