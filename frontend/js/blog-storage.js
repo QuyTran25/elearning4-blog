@@ -14,13 +14,37 @@ function getAllBlogs() {
 
 // Save blogs
 function saveBlogs(blogs) {
+  console.log('💾 Saving blogs to localStorage:', blogs.length, 'blogs')
   localStorage.setItem(BLOGS_KEY, JSON.stringify(blogs))
+  
+  // Verify save
+  const saved = localStorage.getItem(BLOGS_KEY)
+  const parsed = JSON.parse(saved)
+  console.log('✅ Verified save:', parsed.length, 'blogs')
+  console.log('📋 Saved blog IDs:', parsed.map(b => b.id))
 }
 
 // Get blog by ID
 function getBlogById(id) {
   const blogs = getAllBlogs()
-  return blogs.find((blog) => blog.id === id)
+  const idStr = String(id)
+  
+  console.log('🔍 getBlogById called with ID:', id, '(type:', typeof id, ')')
+  console.log('� Converted to string:', idStr)
+  console.log('📚 Total blogs:', blogs.length)
+  
+  // Log each blog comparison
+  blogs.forEach((blog, index) => {
+    const blogIdStr = String(blog.id)
+    const match = blogIdStr === idStr
+    console.log(`  [${index}] Blog ID: "${blogIdStr}" (type: ${typeof blog.id}) === "${idStr}"? ${match}`)
+  })
+  
+  // Find with string comparison
+  const found = blogs.find((blog) => String(blog.id) === idStr)
+  
+  console.log('🎯 Found blog:', found ? found.title : 'NOT FOUND')
+  return found
 }
 
 // Create blog
@@ -33,6 +57,8 @@ function createBlog(blogData) {
     title: blogData.title,
     category: blogData.category,
     content: blogData.content,
+    summary: blogData.summary || '',
+    tags: blogData.tags || [],
     image: blogData.image || null,
     author: {
       id: user.id,
@@ -42,8 +68,11 @@ function createBlog(blogData) {
     updatedAt: new Date().toISOString(),
   }
 
+  console.log('💾 Creating new blog:', newBlog)
   blogs.push(newBlog)
   saveBlogs(blogs)
+  console.log('✅ Blog saved. Total blogs:', blogs.length)
+  console.log('📋 All blog IDs:', blogs.map(b => b.id))
 
   return newBlog
 }
@@ -62,6 +91,8 @@ function updateBlog(id, blogData) {
     title: blogData.title,
     category: blogData.category,
     content: blogData.content,
+    summary: blogData.summary !== undefined ? blogData.summary : blogs[index].summary,
+    tags: blogData.tags !== undefined ? blogData.tags : blogs[index].tags,
     image: blogData.image !== undefined ? blogData.image : blogs[index].image,
     updatedAt: new Date().toISOString(),
   }

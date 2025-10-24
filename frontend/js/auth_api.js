@@ -37,7 +37,10 @@ async function loginAdmin(email, password) {
   try {
     const res = await fetch(API_URL + "/login", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
       body: JSON.stringify({ email, password }),
     });
     const data = await res.json();
@@ -118,5 +121,9 @@ function requireAdmin() {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
+  console.log('🔍 Checking auth status...');
+  console.log('Token exists:', !!getToken());
+  console.log('Is admin:', isAdmin());
   checkAuth();
+  console.log('✅ Auth check completed');
 });

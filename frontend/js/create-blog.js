@@ -19,11 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const urlParams = new URLSearchParams(window.location.search)
   editBlogId = urlParams.get("id")
 
-  if (editBlogId) {
-    editMode = true
-    loadBlogForEdit()
-  }
-
+  // Setup all components first
   setupForm()
   setupCounters()
   setupImageUpload()
@@ -32,7 +28,17 @@ document.addEventListener("DOMContentLoaded", () => {
   setupPreview()
   setupDraftButtons()
   setupAutoSave()
-  loadDraft()
+
+  // Load blog for edit AFTER everything is ready
+  if (editBlogId) {
+    editMode = true
+    // Add small delay to ensure localStorage is fully accessible
+    setTimeout(() => {
+      loadBlogForEdit()
+    }, 100)
+  } else {
+    loadDraft()
+  }
   
   console.log('✅ Create-blog page ready!')
 })
@@ -40,13 +46,34 @@ document.addEventListener("DOMContentLoaded", () => {
 // ========== LOAD BLOG FOR EDIT ==========
 function loadBlogForEdit() {
   console.log('📝 Loading blog for edit:', editBlogId)
+  
+  // Debug: Check localStorage directly
+  const rawData = localStorage.getItem('tech_blog_posts')
+  console.log('🗄️ Raw localStorage data:', rawData)
+  
+  // Debug: Check all blogs
+  const allBlogs = getAllBlogs()
+  console.log('📚 All blogs in storage:', allBlogs)
+  console.log('🔍 Looking for blog ID:', editBlogId)
+  
+  // Try to find manually
+  const foundManually = allBlogs.find(b => b.id === editBlogId)
+  console.log('🔎 Found manually (strict ===):', foundManually)
+  
+  const foundLoose = allBlogs.find(b => b.id == editBlogId)
+  console.log('🔎 Found loosely (==):', foundLoose)
+  
   const blog = getBlogById(editBlogId)
 
   if (!blog) {
+    console.error('❌ Blog not found! ID:', editBlogId)
+    console.error('Available blog IDs:', allBlogs.map(b => b.id))
     alert('Không tìm thấy bài viết')
     window.location.href = "blogs.html"
     return
   }
+  
+  console.log('✅ Blog found:', blog)
 
   // Check if user owns this blog
   const currentUser = getCurrentUser()
@@ -522,16 +549,26 @@ function handleSubmit(e) {
       let result
       if (editMode) {
         result = updateBlog(editBlogId, blogData)
+        console.log('✅ Updated blog:', result)
       } else {
         result = createBlog(blogData)
+        console.log('✅ Created new blog:', result)
+        console.log('🆔 New blog ID:', result?.id)
       }
       
       if (result) {
         if (autoSaveInterval) clearInterval(autoSaveInterval)
         clearDraft()
-        alert(editMode ? '✅ Cập nhật bài viết thành công!' : '✅ Xuất bản bài viết thành công!')
+        
         const blogId = editMode ? editBlogId : result.id
-        window.location.href = `blog-detail.html?id=${blogId}`
+        console.log('🔄 Redirecting to blog detail with ID:', blogId)
+        
+        alert(editMode ? '✅ Cập nhật bài viết thành công!' : '✅ Xuất bản bài viết thành công!')
+        
+        // Thêm delay nhỏ để đảm bảo localStorage đã lưu
+        setTimeout(() => {
+          window.location.href = `blog-detail.html?id=${blogId}`
+        }, 100)
       } else {
         throw new Error('Failed to save blog')
       }

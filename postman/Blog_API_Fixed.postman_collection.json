@@ -1,0 +1,727 @@
+{
+	"info": {
+		"_postman_id": "f1b1c5a9-1f0b-44f1-9bbf-b0c1a6f1a777",
+		"name": "elearning4-blog API",
+		"description": "Postman collection cho dự án elearning4-blog (Laravel + MySQL + Frontend JS)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Response has token\", function () {",
+									"    pm.expect(jsonData.token).to.exist;",
+									"});",
+									"",
+									"if (jsonData.token) {",
+									"    pm.collectionVariables.set(\"token\", jsonData.token);",
+									"    console.log(\"Token saved: \" + jsonData.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"admin@gmail.com\",\n    \"password\": \"123456\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Đăng nhập với admin. Token sẽ tự động lưu."
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Info",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Response has user data\", function () {",
+									"    pm.expect(jsonData.id).to.exist;",
+									"    pm.expect(jsonData.email).to.exist;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/user",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user"
+							]
+						},
+						"description": "Lấy thông tin user hiện tại"
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"if (pm.response.code === 200) {",
+									"    pm.collectionVariables.set(\"token\", \"\");",
+									"    console.log(\"Token cleared\");",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/logout",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"logout"
+							]
+						},
+						"description": "Đăng xuất và xóa token"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Blogs",
+			"item": [
+				{
+					"name": "Get All Blogs",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Response is an array\", function () {",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"});",
+									"",
+									"if (jsonData.length > 0) {",
+									"    pm.collectionVariables.set(\"blog_id\", jsonData[0].id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/blogs",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"blogs"
+							]
+						},
+						"description": "Lấy danh sách tất cả blogs"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Blog by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Blog has required fields\", function () {",
+									"    pm.expect(jsonData.id).to.exist;",
+									"    pm.expect(jsonData.title).to.exist;",
+									"    pm.expect(jsonData.content).to.exist;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/blogs/{{blog_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"blogs",
+								"{{blog_id}}"
+							]
+						},
+						"description": "Lấy chi tiết một blog"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Blog",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 or 201\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"});",
+									"",
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Blog created successfully\", function () {",
+									"    pm.expect(jsonData.id).to.exist;",
+									"});",
+									"",
+									"if (jsonData.id) {",
+									"    pm.collectionVariables.set(\"new_blog_id\", jsonData.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Blog từ Postman - {{$randomInt}}\",\n    \"content\": \"Nội dung test. Timestamp: {{$timestamp}}\",\n    \"image_url\": \"https://via.placeholder.com/800x400\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/blogs",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"blogs"
+							]
+						},
+						"description": "Tạo blog mới"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Blog",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Blog updated successfully\", function () {",
+									"    pm.expect(jsonData.id).to.exist;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Blog đã cập nhật - {{$timestamp}}\",\n    \"content\": \"Nội dung mới sau khi update\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/blogs/{{blog_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"blogs",
+								"{{blog_id}}"
+							]
+						},
+						"description": "Cập nhật blog"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Blog",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 or 204\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/blogs/{{new_blog_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"blogs",
+								"{{new_blog_id}}"
+							]
+						},
+						"description": "Xóa blog"
+					},
+					"response": []
+				},
+				{
+					"name": "Upload Image",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Response has image URL\", function () {",
+									"    pm.expect(jsonData.data.url).to.exist;",
+									"});",
+									"",
+									"if (jsonData.data.url) {",
+									"    pm.collectionVariables.set(\"uploaded_image_url\", jsonData.data.url);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/blogs/upload",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"blogs",
+								"upload"
+							]
+						},
+						"description": "Upload ảnh cho blog. Chọn file ảnh (jpg, png, gif) max 2MB."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Test Scenarios",
+			"item": [
+				{
+					"name": "Full Blog Lifecycle",
+					"item": [
+						{
+							"name": "1. Login",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Login successful\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.token).to.exist;",
+											"    pm.collectionVariables.set(\"token\", jsonData.token);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"admin@gmail.com\",\n    \"password\": \"123456\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/auth/login",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"auth",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2. Create Blog",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Blog created\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+											"    var jsonData = pm.response.json();",
+											"    pm.collectionVariables.set(\"test_blog_id\", jsonData.id);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"title\": \"Test Scenario Blog\",\n    \"content\": \"Content for testing\",\n    \"image_url\": \"https://via.placeholder.com/800x400\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/blogs",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"blogs"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3. Get Blog Detail",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Get blog detail\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/blogs/{{test_blog_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"blogs",
+										"{{test_blog_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4. Update Blog",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Blog updated\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"title\": \"Test Blog - Updated\",\n    \"content\": \"Updated content\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/blogs/{{test_blog_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"blogs",
+										"{{test_blog_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "5. Delete Blog",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Blog deleted\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/blogs/{{test_blog_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"blogs",
+										"{{test_blog_id}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Unauthorized Access Test",
+					"item": [
+						{
+							"name": "Get Blogs Without Token",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Should return 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/blogs",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"blogs"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://127.0.0.1:8000/api",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "blog_id",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "new_blog_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "test_blog_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "uploaded_image_url",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

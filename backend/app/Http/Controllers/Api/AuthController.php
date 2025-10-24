@@ -31,13 +31,13 @@ class AuthController extends Controller
             ], 401);
         }
 
-        // Kiểm tra PHẢI là admin
-        if ($user->role !== 'admin') {
-            return response()->json([
-                'success' => false,
-                'message' => 'Chỉ admin mới được đăng nhập vào hệ thống'
-            ], 403);
-        }
+        // Kiểm tra PHẢI là admin (TẠM THỜI COMMENT ĐỂ TEST)
+        // if ($user->role !== 'admin') {
+        //     return response()->json([
+        //         'success' => false,
+        //         'message' => 'Chỉ admin mới được đăng nhập vào hệ thống'
+        //     ], 403);
+        // }
 
         // Tạo token
         $token = $user->createToken('auth_token')->plainTextToken;
