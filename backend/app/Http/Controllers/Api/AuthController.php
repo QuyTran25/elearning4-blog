@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
@@ -12,13 +14,9 @@ class AuthController extends Controller
     /**
      * Đăng nhập - CHỈ DÀNH CHO ADMIN
      */
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        // Validate input
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required'
-        ]);
+        // Validation tự động từ LoginRequest
 
         // Tìm user theo email
         $user = User::where('email', $request->email)->first();

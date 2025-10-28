@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Http\Requests\StoreBlogRequest;
+use App\Http\Requests\UpdateBlogRequest;
+use App\Http\Requests\UploadImageRequest;
 use App\Models\Blog;
 use Illuminate\Support\Facades\Storage;
 
@@ -12,6 +15,12 @@ class BlogController extends Controller
     // 🟢 1. Lấy danh sách blog (có tìm kiếm + sắp xếp)
     public function index(Request $request)
     {
+        // Validate search và sort parameters
+        $request->validate([
+            'search' => 'nullable|string|max:255',
+            'sort' => 'nullable|in:asc,desc',
+        ]);
+
         $query = Blog::with('author');
 
         // Tìm kiếm theo tiêu đề
@@ -50,19 +59,16 @@ class BlogController extends Controller
     }
 
     // 🟢 3. Tạo blog mới
-    public function store(Request $request)
+    public function store(StoreBlogRequest $request)
     {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',
-            'image_url' => 'nullable|string|max:500'
-        ]);
+        // Validation tự động từ StoreBlogRequest
 
         // Tự động lấy author_id từ user đã đăng nhập
         $blog = Blog::create([
-            'title' => $request->title,
-            'content' => $request->content,
-            'image_url' => $request->image_url,
+            'title' => $request->input('title'),
+            'content' => $request->input('content'),
+            'category_id' => $request->input('category_id'),
+            'image_url' => $request->input('image_url'),
             'author_id' => auth()->id(), // Lấy từ user đã đăng nhập
         ]);
 
@@ -77,8 +83,10 @@ class BlogController extends Controller
     }
 
     // 🟢 4. Cập nhật blog
-    public function update(Request $request, $id)
+    public function update(UpdateBlogRequest $request, $id)
     {
+        // Validation tự động từ UpdateBlogRequest
+        
         $blog = Blog::find($id);
 
         if (!$blog) {
@@ -96,22 +104,13 @@ class BlogController extends Controller
             ], 403);
         }
 
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',
-            'image_url' => 'nullable|string|max:500'
+        // Cập nhật thông tin - Dùng update() thay vì gán trực tiếp
+        $blog->update([
+            'title' => $request->input('title'),
+            'content' => $request->input('content'),
+            'category_id' => $request->input('category_id'),
+            'image_url' => $request->input('image_url'),
         ]);
-
-        // Cập nhật thông tin
-        $blog->title = $request->title;
-        $blog->content = $request->content;
-        
-        // Cập nhật image_url nếu có
-        if ($request->has('image_url')) {
-            $blog->image_url = $request->image_url;
-        }
-
-        $blog->save();
 
         // Load lại thông tin author
         $blog->load('author');
@@ -158,11 +157,9 @@ class BlogController extends Controller
     }
 
     // 🟢 6. Upload ảnh blog
-    public function upload(Request $request)
+    public function upload(UploadImageRequest $request)
     {
-        $request->validate([
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048' // Max 2MB
-        ]);
+        // Validation tự động từ UploadImageRequest
 
         if ($request->hasFile('image')) {
             // Lưu vào storage/app/public/blogs
