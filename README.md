@@ -4,8 +4,6 @@
 
 **Ứng dụng web chia sẽ kiến thức công nghệ**
 
-[Tính năng](#tính-năng-chính) • [Công nghệ](#công-nghệ--tools) • [Cài đặt](#hướng-dẫn-cài-đặt) • [Demo](#hình-ảnh-demo) • [Contributors](#contributors)
-
 </div>
 
 ---
