@@ -1,0 +1,11 @@
+.git
+.gitignore
+.env.example
+.DS_Store
+*.md
+node_modules
+vendor
+.vscode
+.idea
+storage/logs/*
+bootstrap/cache/*

@@ -175,11 +175,10 @@ CLIENT                          BACKEND API                     DATABASE
 ### Development Tools
 | Tool | Mục đích |
 |------|----------|
-| **XAMPP** | Local server (Apache, MySQL, PHP) |
+| **Docker** | Container hóa MySQL + Laravel |
 | **Postman** | Test API endpoints |
 | **VS Code** | Code editor |
 | **Git** | Version control |
-| **phpMyAdmin** | Quản lý MySQL database |
 
 ---
 
@@ -256,94 +255,52 @@ elearning4-blog/
 
 ### Yêu cầu hệ thống
 
-- **PHP**: >= 8.0
-- **Composer**: Latest version
-- **MySQL**: >= 8.0
-- **XAMPP**: hoặc Apache + MySQL stack
-- **Node.js**: (Optional, nếu cần build tools)
+- **Docker Desktop**: đã cài và đang chạy
 - **Web Browser**: Chrome, Firefox, Edge (latest)
+- **VS Code** + **Live Server** extension (để chạy frontend)
 
 ---
 
-### BƯỚC 1: Cài đặt Backend (Laravel)
-
-#### 1.1. Clone repository
+### BƯỚC 1: Clone repository
 
 ```bash
 git clone https://github.com/QuyTran25/elearning4-blog.git
 cd elearning4-blog
 ```
 
-#### 1.2. Cài đặt dependencies PHP
+---
+
+### BƯỚC 2: Khởi động Backend với Docker
 
 ```bash
-cd backend
-composer install
+docker-compose up -d
 ```
 
-#### 1.3. Tạo file môi trường
+Docker sẽ tự động:
+- Khởi động **MySQL 8.0** trên port `3307`
+- Import database từ file `reset-database.sql`
+- Cài đặt PHP dependencies (`composer install`)
+- Khởi động **Laravel API** trên port `8000`
+
+Kiểm tra trạng thái:
 
 ```bash
-cp .env.example .env
-php artisan key:generate
+docker-compose ps
 ```
 
-#### 1.4. Cấu hình Database
+Backend chạy tại: **http://localhost:8000**
 
-Mở file `backend/.env` và cấu hình:
-
-```env
-APP_NAME=e4-Blog
-APP_ENV=local
-APP_DEBUG=true
-APP_URL=http://127.0.0.1:8000
-
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=e4-blog
-DB_USERNAME=root
-DB_PASSWORD=
-```
-
-#### 1.5. Tạo và import Database
-
-**Cách 1: Sử dụng phpMyAdmin (Khuyến nghị)**
-
-1. Mở XAMPP Control Panel và start **Apache** + **MySQL**
-2. Truy cập: http://localhost/phpmyadmin
-3. Click **New** → Tạo database tên `e4-blog`
-4. Click **Import** → Chọn file `reset-database.sql`
-5. Click **Go**
-
-**Cách 2: Command Line**
-
-```powershell
-# Windows (XAMPP)
-cmd /c ""C:\xampp\mysql\bin\mysql.exe" -u root < "reset-database.sql""
-```
-
-#### 1.6. Tạo symbolic link cho storage
+Xem logs nếu cần debug:
 
 ```bash
-php artisan storage:link
+docker-compose logs -f laravel
 ```
-
-#### 1.7. Khởi động server Laravel
-
-```bash
-php artisan serve
-```
-
-Backend chạy tại: **http://127.0.0.1:8000**
 
 ---
 
-### BƯỚC 2: Cấu hình Frontend
+### BƯỚC 3: Cấu hình Frontend
 
-#### 2.1. Mở frontend bằng Live Server
-
-**Khuyến nghị:** Sử dụng **Live Server** extension trong VS Code
+#### 3.1. Mở frontend bằng Live Server
 
 1. Cài đặt extension **Live Server** trong VS Code
 2. Mở thư mục `frontend/`
@@ -351,7 +308,7 @@ Backend chạy tại: **http://127.0.0.1:8000**
 
 Frontend chạy tại: **http://127.0.0.1:5500** (hoặc port khác)
 
-#### 2.2. Kiểm tra API URL
+#### 3.2. Kiểm tra API URL
 
 Mở file `frontend/js/auth_api.js` và đảm bảo:
 
@@ -361,15 +318,15 @@ const API_URL = "http://127.0.0.1:8000/api";
 
 ---
 
-### BƯỚC 3: Test với Postman
+### BƯỚC 4: Test với Postman
 
-#### 3.1. Import Collection
+#### 4.1. Import Collection
 
 1. Mở **Postman**
 2. Click **Import** → **Upload Files**
 3. Chọn file `postman/Blog_API_Fixed.postman_collection.json`
 
-#### 3.2. Tạo Environment
+#### 4.2. Tạo Environment
 
 Tạo Environment mới với các biến:
 
@@ -378,7 +335,7 @@ Tạo Environment mới với các biến:
 | `base_url` | `http://127.0.0.1:8000/api` | `http://127.0.0.1:8000/api` |
 | `token` | *(để trống)* | *(sẽ tự động set sau khi login)* |
 
-#### 3.3. Test Login
+#### 4.3. Test Login
 
 1. Chọn request **Auth → Login**
 2. Body:
@@ -391,13 +348,26 @@ Tạo Environment mới với các biến:
 3. Click **Send**
 4. Token sẽ tự động lưu vào biến `{{token}}`
 
-#### 3.4. Test các API khác
+#### 4.4. Test các API khác
 
 - **Get User Info**: `GET /api/user`
 - **Get Blogs**: `GET /api/blogs`
 - **Create Blog**: `POST /api/blogs`
 - **Update Blog**: `PUT /api/blogs/{id}`
 - **Delete Blog**: `DELETE /api/blogs/{id}`
+
+---
+
+### Dừng và reset dự án
+
+```bash
+# Dừng containers
+docker-compose down
+
+# Dừng và xóa database (reset toàn bộ)
+docker-compose down -v
+docker-compose up -d
+```
 
 ---
 
@@ -500,17 +470,21 @@ GET /api/blogs?search=AI&sort=desc
 
 ### Lỗi: Không kết nối được database
 
-**Nguyên nhân:** MySQL chưa chạy hoặc cấu hình sai
+**Nguyên nhân:** Container MySQL chưa chạy hoặc chưa khởi động xong
 
 **Giải pháp:**
-1. Mở XAMPP Control Panel
-2. Click **Start** cho MySQL
-3. Kiểm tra file `.env`:
-   ```env
-   DB_HOST=127.0.0.1
-   DB_DATABASE=e4-blog
-   DB_USERNAME=root
-   DB_PASSWORD=
+1. Kiểm tra trạng thái containers:
+   ```bash
+   docker-compose ps
+   ```
+2. Nếu MySQL chưa chạy, khởi động lại:
+   ```bash
+   docker-compose down
+   docker-compose up -d
+   ```
+3. Kiểm tra logs MySQL:
+   ```bash
+   docker-compose logs mysql
    ```
 
 ---
@@ -532,8 +506,8 @@ Kiểm tra file `backend/config/cors.php`:
 
 Sau đó clear cache:
 ```bash
-php artisan config:clear
-php artisan cache:clear
+docker-compose exec laravel php artisan config:clear
+docker-compose exec laravel php artisan cache:clear
 ```
 
 ---
@@ -560,8 +534,7 @@ Nếu vẫn lỗi, đăng xuất và đăng nhập lại để lấy token mới
 **Giải pháp:**
 
 ```bash
-cd backend
-php artisan storage:link
+docker-compose exec laravel php artisan storage:link
 ```
 
 Kiểm tra folder `backend/storage/app/public/blogs` đã tồn tại chưa.
