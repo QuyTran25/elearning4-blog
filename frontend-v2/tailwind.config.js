@@ -6,6 +6,10 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        serif: ['Lora', 'Liberation Serif', 'Georgia', 'serif'],
+      },
       colors: {
         navy: {
           900: '#0f172a',

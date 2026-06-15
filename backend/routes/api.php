@@ -29,11 +29,13 @@ Route::middleware('auth:sanctum')->group(function () {
 
 use App\Http\Controllers\Api\BlogController;
 
+Route::get('/blogs', [BlogController::class, 'index']);
+Route::get('/blogs/{id}', [BlogController::class, 'show']);
+
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/blogs', [BlogController::class, 'index']);
-    Route::get('/blogs/{id}', [BlogController::class, 'show']);
     Route::post('/blogs', [BlogController::class, 'store']);
     Route::put('/blogs/{id}', [BlogController::class, 'update']);
     Route::delete('/blogs/{id}', [BlogController::class, 'destroy']);
     Route::post('/blogs/upload', [BlogController::class, 'upload']); // Upload ảnh
 });
+

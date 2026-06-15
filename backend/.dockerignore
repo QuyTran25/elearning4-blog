@@ -9,3 +9,4 @@ vendor
 .idea
 storage/logs/*
 bootstrap/cache/*
+public/storage

@@ -63,7 +63,7 @@ CREATE TABLE `blogs` (
 -- Email: admin@example.com
 -- Password: admin123
 INSERT INTO `users` (`name`, `email`, `password`, `role`) 
-VALUES ('Administrator', 'admin@example.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin');
+VALUES ('Administrator', 'admin@example.com', '$2y$10$pZTS4Av/PfAU0VCbaSMRmOj9H8T26snxIxPNS4rVHxpqpU8vvHgDW', 'admin');
 
 -- INSERT CATEGORIES MẪU
 INSERT INTO `categories` (`name`) VALUES

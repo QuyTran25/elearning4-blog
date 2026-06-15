@@ -6,7 +6,7 @@ import apiClient from './api';
  */
 export const login = async (email, password) => {
   try {
-    const response = await apiClient.post('/login', {
+    const response = await apiClient.post('/auth/login', {
       email,
       password,
     });
@@ -34,7 +34,7 @@ export const login = async (email, password) => {
  */
 export const logout = async () => {
   try {
-    const response = await apiClient.post('/logout');
+    const response = await apiClient.post('/auth/logout');
     // Clear local storage regardless
     localStorage.removeItem('admin_token');
     localStorage.removeItem('admin_user');

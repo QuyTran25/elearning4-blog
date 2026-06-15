@@ -21,7 +21,7 @@ class BlogController extends Controller
             'sort' => 'nullable|in:asc,desc',
         ]);
 
-        $query = Blog::with('author');
+        $query = Blog::with(['author', 'category']);
 
         // Tìm kiếm theo tiêu đề
         if ($request->has('search')) {
@@ -43,7 +43,7 @@ class BlogController extends Controller
     // 🟢 2. Xem chi tiết blog
     public function show($id)
     {
-        $blog = Blog::with('author')->find($id);
+        $blog = Blog::with(['author', 'category'])->find($id);
 
         if (!$blog) {
             return response()->json([
