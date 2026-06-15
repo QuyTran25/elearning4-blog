@@ -82,6 +82,25 @@ export const deleteBlog = async (id) => {
   }
 };
 
+/**
+ * Upload blog image
+ * Accepts FormData with 'image' field
+ * Returns: { success: true, data: { url: 'path/to/image' } }
+ */
+export const uploadBlogImage = async (formData) => {
+  try {
+    const response = await apiClient.post('/blogs/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Image upload failed:', error);
+    throw error;
+  }
+};
+
 // Export as service object
 export default {
   getBlogs,
@@ -89,4 +108,5 @@ export default {
   createBlog,
   updateBlog,
   deleteBlog,
+  uploadBlogImage,
 };

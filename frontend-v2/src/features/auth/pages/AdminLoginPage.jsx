@@ -34,6 +34,18 @@ export default function AdminLoginPage() {
         background: 'radial-gradient(128.06% 160.08% at 0% 0%, rgba(49, 46, 129, 0.04) 0%, rgba(49, 46, 129, 0) 50%), radial-gradient(128.06% 160.08% at 0% 0%, rgba(49, 46, 129, 0.03) 0%, rgba(49, 46, 129, 0) 50%), radial-gradient(128.06% 160.08% at 100% 100%, rgba(49, 46, 129, 0.05) 0%, rgba(49, 46, 129, 0) 50%), linear-gradient(0deg, #F7F9FB, #F7F9FB), #FFFFFF'
       }}
     >
+      {/* Back Button */}
+      <button
+        onClick={() => navigate('/')}
+        className="absolute top-6 left-6 flex items-center gap-2 px-4 py-2 text-[#1A146B] hover:bg-white/50 rounded-lg transition-all duration-200"
+        title="Quay về trang chủ"
+      >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+        </svg>
+        <span className="font-inter font-medium text-sm hidden sm:inline">Trang chủ</span>
+      </button>
+
       <div className="flex flex-col items-center gap-[16.8px]">
         {/* Main Card */}
         <div className="w-[408px] bg-white rounded-[12px] p-[40px] shadow-[0px_4px_20px_rgba(0,0,0,0.04)] flex flex-col items-center">
