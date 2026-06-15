@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
-import { getBlogs } from '../../../shared/services/blog.service';
+import { getBlogs, deleteBlog } from '../../../shared/services/blog.service';
+import { useAuth } from '../../auth/hooks/useAuth';
 
 export default function HomePage() {
   const navigate = useNavigate();
   const outletContext = useOutletContext();
   const searchQuery = outletContext?.searchQuery || '';
+  const { isAuthenticated, user } = useAuth();
   
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -38,6 +40,7 @@ export default function HomePage() {
       return 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=800&auto=format&fit=crop';
     }
     if (url.startsWith('http') || url.startsWith('data:')) return url;
+    if (url.startsWith('/')) return url;
     return '/' + url;
   };
 
@@ -299,11 +302,12 @@ export default function HomePage() {
           ]).map(blog => (
             <article 
               key={blog.id}
-              onClick={() => navigate(`/blog/${blog.id}`)}
-              className="bg-white rounded-2xl overflow-hidden border border-[#F1F5F9] shadow-[0px_1px_3px_rgba(0,0,0,0.1),_0px_1px_2px_-1px_rgba(0,0,0,0.1)] hover:shadow-[0_16px_36px_rgba(26,20,107,0.06)] hover:-translate-y-1 transition-all duration-300 group cursor-pointer flex flex-col h-[350px]"
+              className="bg-white rounded-2xl overflow-hidden border border-[#F1F5F9] shadow-[0px_1px_3px_rgba(0,0,0,0.1),_0px_1px_2px_-1px_rgba(0,0,0,0.1)] hover:shadow-[0_16px_36px_rgba(26,20,107,0.06)] hover:-translate-y-1 transition-all duration-300 group flex flex-col h-[350px]"
             >
-              {/* Image Container with Tag Overlay */}
-              <div className="w-full h-[145px] overflow-hidden relative">
+              {/* Image Container with Tag Overlay and Admin Actions */}
+              <div className="w-full h-[145px] overflow-hidden relative cursor-pointer"
+                onClick={() => navigate(`/blog/${blog.id}`)}
+              >
                 <img 
                   src={getImageUrl(blog.image_url)} 
                   alt={blog.title} 
@@ -316,10 +320,51 @@ export default function HomePage() {
                     {blog.category?.name || 'WEB DEV'}
                   </span>
                 </div>
+                {/* Admin actions overlay - chỉ hiện khi là admin */}
+                {isAuthenticated && user?.role === 'admin' && (
+                  <div className="absolute top-3 right-3 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/admin/posts/edit/${blog.id}`);
+                      }}
+                      className="w-7 h-7 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-[#1E1B4B] hover:bg-white transition-all shadow-sm"
+                      title="Chỉnh sửa"
+                    >
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (window.confirm('Bạn có chắc muốn xóa bài viết này?')) {
+                          deleteBlog(blog.id)
+                            .then(res => {
+                              if (res.success) {
+                                setBlogs(prev => prev.filter(b => b.id !== blog.id));
+                              } else {
+                                alert('Lỗi: ' + (res.message || 'Không thể xóa'));
+                              }
+                            })
+                            .catch(err => alert('Có lỗi khi xóa bài viết'));
+                        }
+                      }}
+                      className="w-7 h-7 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-red-500 hover:bg-white transition-all shadow-sm"
+                      title="Xóa"
+                    >
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* Body Content */}
-              <div className="p-6 flex-1 flex flex-col justify-between">
+              <div className="p-6 flex-1 flex flex-col justify-between cursor-pointer"
+                onClick={() => navigate(`/blog/${blog.id}`)}
+              >
                 <div className="space-y-2">
                   {/* Title */}
                   <h3 className="font-serif text-lg font-bold text-[#0F172A] leading-7 group-hover:text-[#1E1B4B] transition-colors duration-300 line-clamp-2">
@@ -354,21 +399,63 @@ export default function HomePage() {
           ]).map(blog => (
             <article 
               key={blog.id}
-              onClick={() => navigate(`/blog/${blog.id}`)}
-              className="bg-white rounded-2xl overflow-hidden border border-[#F1F5F9] shadow-sm hover:shadow-md transition-all duration-300 group cursor-pointer flex flex-col md:flex-row gap-6 p-4"
+              className="bg-white rounded-2xl overflow-hidden border border-[#F1F5F9] shadow-sm hover:shadow-md transition-all duration-300 group flex flex-col md:flex-row gap-6 p-4"
             >
               {/* Left Image */}
-              <div className="w-full md:w-64 aspect-[16/10] overflow-hidden rounded-xl relative flex-shrink-0">
+              <div className="w-full md:w-64 aspect-[16/10] overflow-hidden rounded-xl relative flex-shrink-0 cursor-pointer"
+                onClick={() => navigate(`/blog/${blog.id}`)}
+              >
                 <img 
                   src={getImageUrl(blog.image_url)} 
                   alt={blog.title} 
                   onError={handleImageError}
                   className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500 ease-out"
                 />
+                {/* Admin overlay buttons for list view */}
+                {isAuthenticated && user?.role === 'admin' && (
+                  <div className="absolute top-2 right-2 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/admin/posts/edit/${blog.id}`);
+                      }}
+                      className="w-7 h-7 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-[#1E1B4B] hover:bg-white transition-all shadow-sm"
+                      title="Chỉnh sửa"
+                    >
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (window.confirm('Bạn có chắc muốn xóa bài viết này?')) {
+                          deleteBlog(blog.id)
+                            .then(res => {
+                              if (res.success) {
+                                setBlogs(prev => prev.filter(b => b.id !== blog.id));
+                              } else {
+                                alert('Lỗi: ' + (res.message || 'Không thể xóa'));
+                              }
+                            })
+                            .catch(err => alert('Có lỗi khi xóa bài viết'));
+                        }
+                      }}
+                      className="w-7 h-7 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-red-500 hover:bg-white transition-all shadow-sm"
+                      title="Xóa"
+                    >
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* Right Details */}
-              <div className="flex-1 flex flex-col justify-between py-1 gap-4">
+              <div className="flex-1 flex flex-col justify-between py-1 gap-4 cursor-pointer"
+                onClick={() => navigate(`/blog/${blog.id}`)}
+              >
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
                     <span className="text-[#1E1B4B] font-bold text-xs tracking-wider uppercase bg-[#1E1B4B]/5 px-2.5 py-0.5 rounded-md">

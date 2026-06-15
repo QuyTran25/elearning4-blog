@@ -36,6 +36,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/blogs', [BlogController::class, 'store']);
     Route::put('/blogs/{id}', [BlogController::class, 'update']);
     Route::delete('/blogs/{id}', [BlogController::class, 'destroy']);
-    Route::post('/blogs/upload', [BlogController::class, 'upload']); // Upload ảnh
+    Route::post('/blogs/upload-image', [BlogController::class, 'upload']); // Upload ảnh
 });
 
+// Categories (public)
+use App\Http\Controllers\Api\CategoryController;
+Route::get('/categories', [CategoryController::class, 'index']);
+
+// Comments (public: ai cũng có thể đọc và bình luận)
+use App\Http\Controllers\Api\CommentController;
+Route::get('/blogs/{blogId}/comments', [CommentController::class, 'index']);
+Route::post('/blogs/{blogId}/comments', [CommentController::class, 'store']);

@@ -96,8 +96,8 @@ class BlogController extends Controller
             ], 404);
         }
 
-        // Kiểm tra quyền: chỉ cho phép tác giả cập nhật blog của chính họ
-        if ($blog->author_id !== auth()->id()) {
+        // Kiểm tra quyền: chỉ admin mới được cập nhật blog
+        if (auth()->user()->role !== 'admin') {
             return response()->json([
                 'success' => false,
                 'message' => 'Bạn không có quyền cập nhật bài viết này'
@@ -134,8 +134,8 @@ class BlogController extends Controller
             ], 404);
         }
 
-        // Kiểm tra quyền: chỉ cho phép tác giả xóa blog của chính họ
-        if ($blog->author_id !== auth()->id()) {
+        // Kiểm tra quyền: chỉ admin mới được xóa blog
+        if (auth()->user()->role !== 'admin') {
             return response()->json([
                 'success' => false,
                 'message' => 'Bạn không có quyền xóa bài viết này'

@@ -1,40 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { getBlogById, getBlogs } from '../../../shared/services/blog.service';
+import { getBlogById, getBlogs, deleteBlog } from '../../../shared/services/blog.service';
+import commentService from '../../../shared/services/comment.service';
+import { useAuth } from '../../auth/hooks/useAuth';
 
 export default function BlogDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { isAuthenticated, user } = useAuth();
   const [blog, setBlog] = useState(null);
   const [relatedBlogs, setRelatedBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   // Comments state
-  const [comments, setComments] = useState([
-    {
-      id: 1,
-      author: 'Lê Văn Duy',
-      avatarInitials: 'D',
-      time: '1 giờ trước',
-      sentiment: 'positive', // positive, neutral
-      content: 'Bài viết rất chi tiết và có tính ứng dụng cao. Phần cấu hình Resource Quotas đúng là "nỗi đau" của nhiều team hiện nay. Cảm ơn tác giả!',
-      likes: 12,
-      replies: 2
-    },
-    {
-      id: 2,
-      author: 'Trần Anh Nam',
-      avatarInitials: 'N',
-      time: '4 giờ trước',
-      sentiment: 'neutral',
-      content: 'Cho mình hỏi thêm về việc monitor CPU Throttling, bạn thường dùng tool gì ngoài Prometheus không?',
-      likes: 4,
-      replies: 0
-    }
-  ]);
-  
+  const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
+  const [commentsLoading, setCommentsLoading] = useState(true);
+  const [commentsError, setCommentsError] = useState(null);
   const [likesCount, setLikesCount] = useState(1204);
   const [hasLiked, setHasLiked] = useState(false);
 
@@ -76,11 +59,47 @@ export default function BlogDetailPage() {
     fetchBlogDetail();
   }, [id]);
 
+  // Load comments từ API sau khi có blog
+  useEffect(() => {
+    if (!blog) return;
+
+    const fetchComments = async () => {
+      try {
+        setCommentsLoading(true);
+        const res = await commentService.getComments(blog.id);
+        if (res && res.success) {
+          // Transform API data to match UI format
+          const mapped = (res.data || []).map(c => ({
+            id: c.id,
+            author: c.author_name || 'Khách',
+            avatarInitials: (c.author_name || 'K').charAt(0).toUpperCase(),
+            time: formatCommentTime(c.created_at),
+            sentiment: classifySentiment(c.content),
+            content: c.content,
+            likes: 0,
+            replies: 0
+          }));
+          setComments(mapped);
+        } else {
+          setCommentsError('Không thể tải bình luận');
+        }
+      } catch (err) {
+        console.error(err);
+        setCommentsError('Có lỗi khi tải bình luận');
+      } finally {
+        setCommentsLoading(false);
+      }
+    };
+
+    fetchComments();
+  }, [blog]);
+
   const getImageUrl = (url) => {
     if (!url) {
       return 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=800&auto=format&fit=crop';
     }
     if (url.startsWith('http') || url.startsWith('data:')) return url;
+    if (url.startsWith('/')) return url;
     return '/' + url;
   };
 
@@ -96,6 +115,22 @@ export default function BlogDetailPage() {
       month: '2-digit',
       year: 'numeric'
     });
+  };
+
+  const formatCommentTime = (dateString) => {
+    if (!dateString) return 'Vừa xong';
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return 'Vừa xong';
+    if (diffMins < 60) return `${diffMins} phút trước`;
+    if (diffHours < 24) return `${diffHours} giờ trước`;
+    if (diffDays < 7) return `${diffDays} ngày trước`;
+    return date.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
   };
 
   const renderAvatar = (name, bgClass = 'bg-[#1A146B]/5 text-[#1A146B]', sizeClass = 'w-10 h-10') => {
@@ -125,24 +160,40 @@ export default function BlogDetailPage() {
     return isPositive ? 'positive' : 'neutral';
   };
 
-  const handleCommentSubmit = (e) => {
+  const handleCommentSubmit = async (e) => {
     e.preventDefault();
     if (!newComment.trim()) return;
 
-    const sentiment = classifySentiment(newComment);
-    const addedComment = {
-      id: Date.now(),
-      author: 'Khách',
-      avatarInitials: 'K',
-      time: 'Vừa xong',
-      sentiment: sentiment,
-      content: newComment,
-      likes: 0,
-      replies: 0
-    };
+    try {
+      const res = await commentService.createComment(blog.id, {
+        author_name: 'Khách',
+        content: newComment,
+      });
 
-    setComments(prev => [addedComment, ...prev]);
-    setNewComment('');
+      if (res && res.success) {
+        const sentiment = classifySentiment(newComment);
+        const newCommentObj = {
+          id: res.data.id,
+          author: 'Khách',
+          avatarInitials: 'K',
+          time: 'Vừa xong',
+          sentiment: sentiment,
+          content: newComment,
+          likes: 0,
+          replies: 0
+        };
+        setComments(prev => [newCommentObj, ...prev]);
+        setNewComment('');
+      } else {
+        alert('Lỗi: ' + (res?.message || 'Không thể gửi bình luận'));
+      }
+    } catch (error) {
+      const errMsg = error.response?.data?.message
+        || (error.response?.data?.errors ? JSON.stringify(error.response.data.errors) : null)
+        || 'Có lỗi xảy ra khi gửi bình luận';
+      alert(errMsg);
+      console.error('Submit comment error:', error);
+    }
   };
 
   // Intelligent content formatter
@@ -303,18 +354,62 @@ export default function BlogDetailPage() {
                 </div>
               </div>
 
-              {/* Action buttons (Share / Bookmark) */}
+
+              {/* Action buttons */}
               <div className="flex gap-2">
-                <button className="w-10 h-10 rounded-full border border-slate-100 flex items-center justify-center text-[#474651] hover:bg-slate-50 transition-colors shadow-sm" title="Chia sẻ">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.684 10.742l4.622-2.312m0 0a3 3 0 11.268-1.742l-4.622 2.312m0 0a3 3 0 11-.268 1.742m0 0a3 3 0 11-4.622-2.312" />
-                  </svg>
-                </button>
-                <button className="w-10 h-10 rounded-full border border-slate-100 flex items-center justify-center text-[#474651] hover:bg-slate-50 transition-colors shadow-sm" title="Lưu bài viết">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-                  </svg>
-                </button>
+                {isAuthenticated && user?.role === 'admin' ? (
+                  <>
+                    <button
+                      onClick={() => navigate(`/admin/posts/edit/${blog.id}`)}
+                      className="flex items-center gap-1.5 px-4 py-2 bg-[#1A146B]/5 text-[#1A146B] rounded-full hover:bg-[#1A146B]/10 transition-colors text-xs font-bold"
+                      title="Chỉnh sửa bài viết"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                      <span className="hidden sm:inline">Sửa</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (window.confirm('Bạn có chắc muốn xóa bài viết này?')) {
+                          deleteBlog(blog.id)
+                            .then(res => {
+                              if (res.success) {
+                                alert('Đã xóa bài viết thành công!');
+                                navigate('/');
+                              } else {
+                                alert('Lỗi: ' + (res.message || 'Không thể xóa bài viết'));
+                              }
+                            })
+                            .catch(err => {
+                              alert('Có lỗi khi xóa bài viết');
+                              console.error(err);
+                            });
+                        }
+                      }}
+                      className="flex items-center gap-1.5 px-4 py-2 bg-red-50 text-red-600 rounded-full hover:bg-red-100 transition-colors text-xs font-bold"
+                      title="Xóa bài viết"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                      <span className="hidden sm:inline">Xóa</span>
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button className="w-10 h-10 rounded-full border border-slate-100 flex items-center justify-center text-[#474651] hover:bg-slate-50 transition-colors shadow-sm" title="Chia sẻ">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M8.684 10.742l4.622-2.312m0 0a3 3 0 11.268-1.742l-4.622 2.312m0 0a3 3 0 11-.268 1.742m0 0a3 3 0 11-4.622-2.312" />
+                      </svg>
+                    </button>
+                    <button className="w-10 h-10 rounded-full border border-slate-100 flex items-center justify-center text-[#474651] hover:bg-slate-50 transition-colors shadow-sm" title="Lưu bài viết">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                      </svg>
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           </header>

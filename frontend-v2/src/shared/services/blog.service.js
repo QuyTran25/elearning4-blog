@@ -30,17 +30,11 @@ export const getBlogById = async (id) => {
 
 /**
  * Create new blog post
- * IMPORTANT: Preserves FormData (not converted to JSON)
- * Backend expects: title, content, category_id, image_url
+ * Sends JSON with: title, content, category_id, image_url (URL string from upload)
  */
-export const createBlog = async (formData) => {
+export const createBlog = async (data) => {
   try {
-    // Do NOT convert FormData to JSON
-    const response = await apiClient.post('/blogs', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    const response = await apiClient.post('/blogs', data);
     return response.data;
   } catch (error) {
     throw error;
@@ -49,20 +43,11 @@ export const createBlog = async (formData) => {
 
 /**
  * Update existing blog post
- * IMPORTANT: Preserves FormData for compatibility
- * Backend expects: title, content, category_id, image_url
- * Laravel expects _method=PUT for FormData POST
+ * Sends JSON with: title, content, category_id, image_url
  */
-export const updateBlog = async (id, formData) => {
+export const updateBlog = async (id, data) => {
   try {
-    // Append _method for Laravel FormData PUT compatibility
-    formData.append('_method', 'PUT');
-
-    const response = await apiClient.post(`/blogs/${id}`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    const response = await apiClient.put(`/blogs/${id}`, data);
     return response.data;
   } catch (error) {
     throw error;
@@ -89,11 +74,7 @@ export const deleteBlog = async (id) => {
  */
 export const uploadBlogImage = async (formData) => {
   try {
-    const response = await apiClient.post('/blogs/upload', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    const response = await apiClient.post('/blogs/upload-image', formData);
     return response.data;
   } catch (error) {
     console.error('Image upload failed:', error);

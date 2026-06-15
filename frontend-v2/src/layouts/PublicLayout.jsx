@@ -4,8 +4,37 @@ import { useAuth } from '../features/auth/hooks/useAuth';
 
 export default function PublicLayout() {
   const [searchQuery, setSearchQuery] = useState('');
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading, user, logout } = useAuth();
   const navigate = useNavigate();
+
+  // Khi đang kiểm tra auth, không render component con để tránh flicker
+  // Nhưng vẫn render layout cho nền mượt
+  if (isLoading) {
+    return (
+      <div className="public-container min-h-screen bg-[#F8FAFC]">
+        <header className="box-sizing-border-box h-16 bg-white/80 border-b border-[#E2E8F0] backdrop-blur-[6px] sticky top-0 z-50">
+          <div className="max-w-[1280px] mx-auto px-6 sm:px-16 h-full flex items-center justify-between gap-4">
+            <div className="flex items-center gap-8">
+              <Link to="/" className="font-serif font-extrabold text-2xl text-[#1E1B4B] tracking-tight">
+                Tech Blog
+              </Link>
+            </div>
+            <div className="flex items-center gap-6">
+              <div className="h-8 w-24 bg-slate-200 rounded-full animate-pulse"></div>
+            </div>
+          </div>
+        </header>
+        <main className="flex-1 flex flex-col bg-[#F8FAFC]">
+          <Outlet context={{ searchQuery, setSearchQuery }} />
+        </main>
+      </div>
+    );
+  }
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/');
+  };
 
   return (
     <div className="public-container min-h-screen bg-[#F8FAFC]">
@@ -31,7 +60,7 @@ export default function PublicLayout() {
             </nav>
           </div>
 
-          {/* Search, Vertical Border, and Sign In */}
+          {/* Search, Vertical Border, and Account */}
           <div className="flex items-center gap-6">
             
             {/* Search Bar Input */}
@@ -63,20 +92,37 @@ export default function PublicLayout() {
             {/* Vertical Divider */}
             <div className="h-5 w-[1px] bg-[#E2E8F0] hidden sm:block"></div>
 
-            {/* Sign In / Dashboard button */}
+            {/* Auth buttons */}
             {isAuthenticated ? (
-              <Link 
-                to="/admin/dashboard" 
-                className="font-sans font-semibold text-sm text-[#475569] hover:text-[#1E1B4B] transition-colors"
-              >
-                Dashboard
-              </Link>
+              <div className="flex items-center gap-3">
+                {/* Admin badge */}
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-[#1E1B4B]/5 rounded-full">
+                  <div className="w-5 h-5 bg-[#1E1B4B] rounded-full flex items-center justify-center text-white text-[10px] font-bold">
+                    {user?.name?.charAt(0) || 'A'}
+                  </div>
+                  <span className="font-sans font-semibold text-xs text-[#1E1B4B] hidden sm:inline">
+                    {user?.name || 'Admin'}
+                  </span>
+                </div>
+                <Link 
+                  to="/admin/dashboard" 
+                  className="font-sans font-semibold text-sm text-[#1E1B4B] hover:text-[#1E1B4B]/80 transition-colors"
+                >
+                  Dashboard
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="font-sans font-semibold text-sm text-[#94A3B8] hover:text-red-500 transition-colors"
+                >
+                  Đăng xuất
+                </button>
+              </div>
             ) : (
               <Link 
                 to="/admin/login" 
                 className="font-sans font-semibold text-sm text-[#475569] hover:text-[#1E1B4B] transition-colors"
               >
-                Sign In
+                Đăng nhập
               </Link>
             )}
           </div>
