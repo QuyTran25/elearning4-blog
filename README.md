@@ -1,267 +1,112 @@
-# E-LEARNING 4 - BLOG CHIA SẺ KIẾN THỨC CÔNG NGHỆ
+#  E4-Blog - Nền tảng Blog Chia Sẻ Kiến Thức Công Nghệ
 
 <div align="center">
 
-**Ứng dụng web chia sẽ kiến thức công nghệ**
+**Một ứng dụng blog fullstack hiện đại với React + Laravel**
 
 </div>
 
 ---
 
-## Mô tả tổng quan
+##  Tổng Quan
 
-**E-Learning 4 Blog** là một nền tảng blog mini được xây dựng theo kiến trúc **API-first**, nơi backend và frontend hoàn toàn tách biệt và giao tiếp qua RESTful API. Dự án được thiết kế dành cho **admin** quản lý và chia sẻ kiến thức công nghệ.
+**E4-Blog** là nền tảng blog mini được xây dựng theo kiến trúc **API-first**, với backend và frontend hoàn toàn tách biệt:
 
-### Mục đích
+- **Backend**: Laravel (PHP) cung cấp RESTful API + MySQL
+- **Frontend**: React 19 (Vite) với giao diện hiện đại, responsive
 
-- Học tập và thực hành xây dựng ứng dụng web fullstack
-- Hiểu rõ kiến trúc API-first và tách biệt frontend/backend
-- Thực hành CRUD operations với Laravel Framework
-- Làm việc với authentication sử dụng Laravel Sanctum
-- Quản lý database với MySQL và migrations
-
-
-### Kiến trúc hệ thống
-
-<details>
-<summary>📂 Click để xem kiến trúc hệ thống chi tiết</summary>
-
-```plaintext
-┌─────────────────────────────────────────────────────────────────┐
-│                         CLIENT (Browser)                        │
-│                    HTML + CSS + JavaScript                      │
-└──────────────────────────┬──────────────────────────────────────┘
-                           │
-                           │ HTTP/HTTPS (TCP/IP)
-                           │ RESTful API Calls
-                           │
-                           ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    BACKEND API SERVER                           │
-│                    Laravel Framework (PHP)                      │
-│  ┌──────────────────────────────────────────────────────────┐   │
-│  │  Routes (api.php)                                        │   │
-│  │    ▼                                                     │   │
-│  │  Controllers (AuthController, BlogController)            │   │
-│  │    ▼                                                     │   │
-│  │  Models (User, Blog, Category)                           │   │
-│  │    ▼                                                     │   │
-│  │  Database Layer (Eloquent ORM)                           │   │
-│  └──────────────────────────────────────────────────────────┘   │
-│                                                                 │
-│  Authentication: Laravel Sanctum (Token-based)                  │
-└──────────────────────────┬──────────────────────────────────────┘
-                           │
-                           │ TCP/IP Connection
-                           │ MySQL Protocol
-                           │
-                           ▼
-┌───────────────────────────────────────────────────────────────┐
-│                      DATABASE SERVER                          │
-│                         MySQL 8.0                             │
-│  ┌─────────────────────────────────────────────────────────┐  │
-│  │  Tables:                                                │  │
-│  │    • users (id, name, email, password, role)            │  │
-│  │    • blogs (id, title, content, image_url, author_id)   │  │
-│  │    • categories (id, name)                              │  │
-│  │    • personal_access_tokens (for Sanctum)               │  │
-│  └─────────────────────────────────────────────────────────┘  │
-└───────────────────────────────────────────────────────────────┘
-```
-
-</details>
+Hệ thống có **2 vai trò**:
+- ** Khách (Guest)**: Xem trang chủ, xem chi tiết bài viết, đọc/viết bình luận
+- ** Admin**: Quản lý bài viết (CRUD), upload ảnh, xem lịch sử bình luận tiêu cực, xem dashboard
 
 ---
 
-
-### Luồng hoạt động của giao thức TCP trong dự án
-
-<details>
-<summary>📂 Click để xem luồng hoạt động giao thức TCP chi tiết</summary>
-
-```plaintext
-CLIENT                          BACKEND API                     DATABASE
-  │                                  │                              │
-  │  1. HTTP Request (TCP)           │                              │
-  │  POST /api/login                 │                              │
-  ├─────────────────────────────────►│                              │
-  │                                  │  2. Query via TCP            │
-  │                                  │  SELECT * FROM users         │
-  │                                  ├─────────────────────────────►│
-  │                                  │                              │
-  │                                  │  3. Response via TCP         │
-  │                                  │◄─────────────────────────────┤
-  │                                  │  User data                   │
-  │  4. HTTP Response (TCP)          │                              │
-  │  {token, user}                   │                              │
-  │◄─────────────────────────────────┤                              │
-  │                                  │                              │
-  │  5. HTTP Request (TCP)           │                              │
-  │  GET /api/blogs                  │                              │
-  │  Header: Bearer {token}          │                              │
-  ├─────────────────────────────────►│                              │
-  │                                  │  6. Verify token             │
-  │                                  │  Query blogs                 │
-  │                                  ├─────────────────────────────►│
-  │                                  │                              │
-  │                                  │  7. Blogs data               │
-  │                                  │◄─────────────────────────────┤
-  │  8. HTTP Response (TCP)          │                              │
-  │  {blogs: [...]}                  │                              │
-  │◄─────────────────────────────────┤                              │
-  │                                  │                              │
-```
-
-**Giải thích:**
-
-- **HTTP/HTTPS** chạy trên nền **TCP/IP** đảm bảo kết nối tin cậy
-- **Three-way handshake** của TCP thiết lập kết nối trước khi truyền dữ liệu
-- **MySQL** sử dụng TCP port 3306 để giao tiếp với Laravel
-- **Laravel Sanctum** xác thực qua Bearer Token trong HTTP headers
-
-</details>
-
----
-
-## Tính năng chính
-
-### Authentication
-- **Đăng nhập Admin** với email và password
-- **Xác thực Token** sử dụng Laravel Sanctum
-- **Đăng xuất** an toàn (revoke tokens)
-
-### Quản lý Blog (CRUD)
-- **Tạo bài viết mới** (Create) - Admin only
-- **Xem danh sách blog** (Read) - Public
-- **Xem chi tiết blog** (Read) - Public
-- **Cập nhật bài viết** (Update) - Author only
-- **Xóa bài viết** (Delete) - Author only
-
-### Upload & Quản lý Media
-- Upload ảnh cho bài viết
-- Preview ảnh trước khi đăng
-- Lưu trữ ảnh trong `storage/app/public/blogs`
-
-### Tìm kiếm & Sắp xếp
-- Tìm kiếm theo tiêu đề bài viết
-- Sắp xếp theo ngày tạo (mới nhất/cũ nhất)
-- Filter theo danh mục (categories)
-
-### Quản lý Danh mục
-- Danh mục blog (Lập trình Web, AI, Bảo mật, v.v.)
-- Relationship giữa Blog và Category
-
----
-
-## Công nghệ & Tools
+##  Công Nghệ Sử Dụng
 
 ### Backend
-| Công nghệ | Phiên bản | Mục đích |
-|-----------|-----------|----------|
-| **PHP** | 8.0+ | Ngôn ngữ lập trình server-side |
-| **Laravel** | 10.x | Framework PHP hiện đại |
-| **Laravel Sanctum** | Latest | API Authentication (Token-based) |
-| **MySQL** | 8.0 | Hệ quản trị cơ sở dữ liệu |
-| **Composer** | Latest | Dependency manager cho PHP |
+| Công nghệ | Phiên bản | Vai trò |
+|-----------|-----------|---------|
+| **PHP** | 8.3 | Ngôn ngữ server |
+| **Laravel** | 10.x | Framework PHP |
+| **Laravel Sanctum** | Latest | Xác thực API (token-based) |
+| **MySQL** | 8.0 | Cơ sở dữ liệu |
+| **Docker** | Latest | Container hóa |
 
 ### Frontend
-| Công nghệ | Mô tả |
-|-----------|-------|
-| **HTML5** | Cấu trúc trang web |
-| **CSS3** | Styling và responsive design |
-| **JavaScript (ES6+)** | Logic xử lý client-side |
-| **Fetch API** | Gọi RESTful API từ backend |
-
-### Development Tools
-| Tool | Mục đích |
-|------|----------|
-| **Docker** | Container hóa MySQL + Laravel |
-| **Postman** | Test API endpoints |
-| **VS Code** | Code editor |
-| **Git** | Version control |
+| Công nghệ | Phiên bản | Vai trò |
+|-----------|-----------|---------|
+| **React** | 19.x | UI Framework |
+| **Vite** | 5.x | Build tool |
+| **React Router** | 7.x | Điều hướng |
+| **Axios** | 1.x | HTTP client |
+| **TailwindCSS** | 3.x | Styling |
+| **Font: Inter + Lora** | Google Fonts | Typography |
 
 ---
 
-## Cấu trúc thư mục
-
-<details>
-<summary>📂 Click để xem cấu trúc chi tiết</summary>
+##  Cấu Trúc Thư Mục
 
 ```plaintext
 elearning4-blog/
 │
-├── backend/                           # Laravel API Backend
+├── backend/                          # Laravel API Backend
 │   ├── app/
 │   │   ├── Http/
-│   │   │   ├── Controllers/
-│   │   │   │   └── Api/
-│   │   │   │       ├── AuthController.php     # Login, Logout, User info
-│   │   │   │       └── BlogController.php     # CRUD Blog + Upload
-│   │   │   ├── Middleware/
+│   │   │   ├── Controllers/Api/
+│   │   │   │   ├── AuthController.php       # Đăng nhập/đăng xuất
+│   │   │   │   ├── BlogController.php       # CRUD bài viết + upload ảnh
+│   │   │   │   ├── CategoryController.php   # Danh mục
+│   │   │   │   └── CommentController.php    # Bình luận
 │   │   │   └── Requests/
-│   │   │       ├── LoginRequest.php           # Validate login
-│   │   │       ├── StoreBlogRequest.php       # Validate create blog
-│   │   │       ├── UpdateBlogRequest.php      # Validate update blog
-│   │   │       └── UploadImageRequest.php     # Validate image upload
+│   │   │       ├── LoginRequest.php
+│   │   │       ├── StoreBlogRequest.php
+│   │   │       ├── UpdateBlogRequest.php
+│   │   │       └── UploadImageRequest.php
 │   │   └── Models/
-│   │       ├── User.php                       # User model
-│   │       ├── Blog.php                       # Blog model
-│   │       └── Category.php                   # Category model
+│   │       ├── User.php
+│   │       ├── Blog.php
+│   │       ├── Category.php
+│   │       └── Comment.php
 │   ├── config/
-│   │   ├── cors.php                           # CORS configuration
-│   │   ├── database.php                       # Database config
-│   │   └── sanctum.php                        # Sanctum config
-│   ├── database/
-│   │   ├── migrations/                        # Database schema migrations
-│   │   └── seeders/                           # Database seeders
-│   ├── routes/
-│   │   └── api.php                            # API routes definition
-│   ├── storage/
-│   │   └── app/public/blogs/                  # Uploaded images
-│   ├── .env                                   # Environment variables
-│   ├── composer.json                          # PHP dependencies
-│   └── artisan                                # Laravel CLI
+│   │   ├── cors.php                  # CORS config
+│   │   └── sanctum.php              # Sanctum config
+│   ├── database/migrations/         # Schema migrations
+│   ├── routes/api.php               # API routes
+│   ├── storage/app/public/blogs/    # Ảnh upload
+│   ├── .env                         # Biến môi trường
+│   └── Dockerfile                   # Docker image
 │
-├── frontend/                          # Static HTML/CSS/JS
-│   ├── css/
-│   │   └── style.css                          # Main stylesheet
-│   ├── js/
-│   │   ├── auth_api.js                        # Authentication API calls
-│   │   ├── blog_api.js                        # Blog API calls
-│   │   ├── login.js                           # Login page logic
-│   │   ├── blogs.js                           # Blog list page logic
-│   │   ├── create-blog.js                     # Create/Edit blog logic
-│   │   ├── blog-detail.js                     # Blog detail page logic
-│   │   └── main.js                            # Common utilities
-│   ├── image/                                 # Static images
-│   ├── index.html                             # Homepage
-│   ├── login.html                             # Login page
-│   ├── blogs.html                             # Blog listing page
-│   ├── blog-detail.html                       # Blog detail page
-│   └── create-blog.html                       # Create/Edit blog page
+├── frontend-v2/                     # React Frontend
+│   ├── src/
+│   │   ├── features/
+│   │   │   ├── auth/                # Login/logout
+│   │   │   ├── blogs/               # Trang chủ, chi tiết bài viết
+│   │   │   ├── dashboard/           # Admin: sidebar, create/edit post
+│   │   │   └── moderation/          # Admin: lịch sử bình luận
+│   │   ├── layouts/                 # Layout components
+│   │   └── shared/services/         # API services, axios config
+│   ├── vite.config.js               # Vite config (có proxy)
+│   └── package.json
 │
-├── postman/
-│   └── Blog_API_Fixed.postman_collection.json # Postman test collection
-│
-├── reset-database.sql                 # SQL script to reset database
-└── README.md                          # This file
+├── docker-compose.yml               # Docker compose (MySQL + Laravel)
+├── reset-database.sql               # SQL script khởi tạo database
+└── README.md                        # Bạn đang đọc file này
 ```
 
-</details>
+---
+
+##  Hướng Dẫn Cài Đặt & Chạy Dự Án
+
+### Yêu Cầu Hệ Thống
+
+- **Docker Desktop** đã cài đặt và đang chạy
+- **Node.js 18+** (để chạy frontend React)
+- **Git** (clone source code)
+- **Trình duyệt** Chrome / Edge / Firefox
 
 ---
 
-## Hướng dẫn cài đặt
-
-### Yêu cầu hệ thống
-
-- **Docker Desktop**: đã cài và đang chạy
-- **Web Browser**: Chrome, Firefox, Edge (latest)
-- **VS Code** + **Live Server** extension (để chạy frontend)
-
----
-
-### BƯỚC 1: Clone repository
+### Bước 1: Clone Dự Án
 
 ```bash
 git clone https://github.com/QuyTran25/elearning4-blog.git
@@ -270,27 +115,30 @@ cd elearning4-blog
 
 ---
 
-### BƯỚC 2: Khởi động Backend với Docker
+### Bước 2: Khởi Động Backend (Docker)
 
 ```bash
+# Khởi động MySQL + Laravel
 docker-compose up -d
 ```
 
 Docker sẽ tự động:
-- Khởi động **MySQL 8.0** trên port `3307`
-- Import database từ file `reset-database.sql`
-- Cài đặt PHP dependencies (`composer install`)
-- Khởi động **Laravel API** trên port `8000`
+1. Khởi tạo **MySQL 8.0** (port `3307`)
+2. Import database từ `reset-database.sql` (gồm: users, categories, blogs mẫu)
+3. Cài đặt PHP dependencies (`composer install`)
+4. Tạo storage symbolic link
+5. Khởi động **Laravel API** (port `8000`)
 
-Kiểm tra trạng thái:
+**Kiểm tra trạng thái:**
 
 ```bash
 docker-compose ps
 ```
 
+Cả 2 container phải có trạng thái `Up`.\
 Backend chạy tại: **http://localhost:8000**
 
-Xem logs nếu cần debug:
+**Xem log nếu cần debug:**
 
 ```bash
 docker-compose logs -f laravel
@@ -298,250 +146,231 @@ docker-compose logs -f laravel
 
 ---
 
-### BƯỚC 3: Cấu hình Frontend
-
-#### 3.1. Mở frontend bằng Live Server
-
-1. Cài đặt extension **Live Server** trong VS Code
-2. Mở thư mục `frontend/`
-3. Right-click vào `index.html` → **Open with Live Server**
-
-Frontend chạy tại: **http://127.0.0.1:5500** (hoặc port khác)
-
-#### 3.2. Kiểm tra API URL
-
-Mở file `frontend/js/auth_api.js` và đảm bảo:
-
-```javascript
-const API_URL = "http://127.0.0.1:8000/api";
-```
-
----
-
-### BƯỚC 4: Test với Postman
-
-#### 4.1. Import Collection
-
-1. Mở **Postman**
-2. Click **Import** → **Upload Files**
-3. Chọn file `postman/Blog_API_Fixed.postman_collection.json`
-
-#### 4.2. Tạo Environment
-
-Tạo Environment mới với các biến:
-
-| Variable | Initial Value | Current Value |
-|----------|---------------|---------------|
-| `base_url` | `http://127.0.0.1:8000/api` | `http://127.0.0.1:8000/api` |
-| `token` | *(để trống)* | *(sẽ tự động set sau khi login)* |
-
-#### 4.3. Test Login
-
-1. Chọn request **Auth → Login**
-2. Body:
-   ```json
-   {
-     "email": "admin@example.com",
-     "password": "password"
-   }
-   ```
-3. Click **Send**
-4. Token sẽ tự động lưu vào biến `{{token}}`
-
-#### 4.4. Test các API khác
-
-- **Get User Info**: `GET /api/user`
-- **Get Blogs**: `GET /api/blogs`
-- **Create Blog**: `POST /api/blogs`
-- **Update Blog**: `PUT /api/blogs/{id}`
-- **Delete Blog**: `DELETE /api/blogs/{id}`
-
----
-
-### Dừng và reset dự án
+### Bước 3: Cài Đặt & Chạy Frontend
 
 ```bash
-# Dừng containers
-docker-compose down
+# Di chuyển vào thư mục frontend
+cd frontend-v2
 
-# Dừng và xóa database (reset toàn bộ)
-docker-compose down -v
+# Cài đặt dependencies
+npm install
+
+# Khởi động dev server
+npm run dev
+```
+
+Frontend chạy tại: **http://localhost:5173** 🎉
+
+> **Lưu ý:** Frontend sử dụng Vite proxy để gọi API backend:
+> - `/api/*` → `http://127.0.0.1:8000/api/*`
+> - `/storage/*` → `http://127.0.0.1:8000/storage/*`
+>
+> Không cần cấu hình CORS hay URL tuyệt đối — mọi thứ đã được thiết lập sẵn!
+
+---
+
+##  Tài Khoản Mặc Định
+
+| Email | Mật khẩu | Vai trò |
+|-------|----------|---------|
+| `admin@example.com` | `admin123` |  Admin |
+
+> Admin có toàn quyền: tạo/sửa/xóa bài viết, upload ảnh, xem dashboard và moderation logs.
+
+---
+
+##  Hướng Dẫn Sử Dụng
+
+###  Trang Chủ (Guest + Admin)
+
+Mở **http://localhost:5173** để xem trang chủ với:
+- Danh sách bài viết dạng **grid** và **list**
+- Tìm kiếm theo tiêu đề
+- Phân loại theo danh mục
+- Ảnh đại diện cho mỗi bài viết
+
+> **Khi đã đăng nhập với admin**: mỗi bài viết sẽ hiển thị icon  (sửa) và  (xóa).
+
+###  Đăng Nhập Admin
+
+1. Click **"Đăng nhập"** ở header
+2. Nhập: `admin@example.com` / `admin123`
+3. Sau khi đăng nhập, bạn sẽ thấy menu **Dashboard** ở header
+
+###  Quản Lý Bài Viết (Admin)
+
+Sau khi đăng nhập, click **Dashboard** hoặc truy cập **http://localhost:5173/admin/dashboard**:
+
+- ** Tạo bài viết mới**: Click "Tạo bài viết mới"
+  - Nhập tiêu đề, chọn danh mục
+  - Upload ảnh đại diện (click vào vùng upload)
+  - Viết nội dung
+  - Click "Xuất bản"
+- ** Sửa bài viết**: Click icon  trên bài viết ở trang chủ hoặc trang chi tiết
+- ** Xóa bài viết**: Click icon  (xác nhận xóa)
+
+###  Bình Luận (Guest + Admin)
+
+Ở trang chi tiết bài viết, mọi người (không cần đăng nhập) có thể:
+- Xem danh sách bình luận
+- Viết bình luận mới
+
+###  Moderation Logs (Admin)
+
+Truy cập **Dashboard → Moderation Logs** để xem lịch sử các bình luận tiêu cực.
+
+---
+
+##  Các Tính Năng Chính
+
+###  Đã Hoàn Thiện
+
+| Tính năng | Mô tả |
+|-----------|-------|
+|  **Trang chủ** | Danh sách bài viết dạng grid/list, tìm kiếm, filter danh mục |
+|  **Chi tiết bài viết** | Xem nội dung đầy đủ, thông tin tác giả, danh mục, ảnh |
+|  **Đăng nhập Admin** | Xác thực token qua Laravel Sanctum |
+|  **CRUD bài viết** | Tạo/sửa/xóa bài viết (admin only) |
+|  **Upload ảnh** | Upload ảnh đại diện cho bài viết |
+|  **Bình luận** | Xem và viết bình luận (public) |
+|  **Dashboard** | Giao diện quản lý admin |
+|  **Tìm kiếm** | Tìm kiếm bài viết theo tiêu đề |
+|  **Danh mục** | 7 danh mục công nghệ khác nhau |
+|  **Responsive** | Giao diện tương thích mọi thiết bị |
+
+###  Chưa Hoàn Thiện
+
+- **Moderation Logs**: API backend chưa kết nối (đang dùng mock data)
+- **Xóa bài viết**: Hiện tại dùng `window.confirm()` — sẽ nâng cấp lên modal
+
+---
+
+##  API Endpoints
+
+### Authentication
+| Method | Endpoint | Mô tả | Auth |
+|--------|----------|-------|------|
+| POST | `/api/auth/login` | Đăng nhập | ❌ |
+| POST | `/api/login` | Đăng nhập (alias) | ❌ |
+| POST | `/api/logout` | Đăng xuất | ✅ |
+| GET | `/api/user` | Thông tin user hiện tại | ✅ |
+
+### Blog Management
+| Method | Endpoint | Mô tả | Auth |
+|--------|----------|-------|------|
+| GET | `/api/blogs` | Danh sách bài viết (`?search=&sort=`) | ❌ |
+| GET | `/api/blogs/{id}` | Chi tiết bài viết | ❌ |
+| POST | `/api/blogs` | Tạo bài viết mới | ✅ |
+| PUT | `/api/blogs/{id}` | Cập nhật bài viết | ✅ |
+| DELETE | `/api/blogs/{id}` | Xóa bài viết | ✅ |
+| POST | `/api/blogs/upload-image` | Upload ảnh | ✅ |
+
+### Categories
+| Method | Endpoint | Mô tả | Auth |
+|--------|----------|-------|------|
+| GET | `/api/categories` | Danh sách danh mục | ❌ |
+
+### Comments
+| Method | Endpoint | Mô tả | Auth |
+|--------|----------|-------|------|
+| GET | `/api/blogs/{blogId}/comments` | Danh sách bình luận | ❌ |
+| POST | `/api/blogs/{blogId}/comments` | Thêm bình luận | ❌ |
+
+---
+
+##  Khắc Phục Sự Cố
+
+### Lỗi: `Connection refused` / Không kết nối được backend
+
+```bash
+# Kiểm tra Docker containers
+docker-compose ps
+
+# Nếu MySQL hoặc Laravel chưa chạy, khởi động lại
+docker-compose down
 docker-compose up -d
 ```
 
----
+### Lỗi: 401 Unauthorized khi gọi API
 
-### Tài khoản mặc định
-
-| Email | Password | Role |
-|-------|----------|------|
-| `admin@example.com` | `password` | Admin |
-
-> **Lưu ý:** Nếu không đăng nhập được, hãy reset lại database bằng file `reset-database.sql`
-
----
-
-## API Endpoints
-
-### Authentication
-
-| Method | Endpoint | Mô tả 
-|--------|----------|-------|
-| POST | `/api/login` | Đăng nhập |
-| POST | `/api/auth/login` | Đăng nhập (alias) |
-| POST | `/api/logout` | Đăng xuất |
-| GET | `/api/user` | Lấy thông tin user hiện tại |
-
-### Blog Management
-
-| Method | Endpoint | Mô tả | 
-|--------|----------|-------|
-| GET | `/api/blogs` | Lấy danh sách blog |
-| GET | `/api/blogs/{id}` | Xem chi tiết blog |
-| POST | `/api/blogs` | Tạo blog mới | 
-| PUT | `/api/blogs/{id}` | Cập nhật blog | 
-| DELETE | `/api/blogs/{id}` | Xóa blog | 
-| POST | `/api/blogs/upload` | Upload ảnh |
-
-### Query Parameters
-
-**GET /api/blogs**
-- `search`: Tìm kiếm theo tiêu đề (ví dụ: `?search=javascript`)
-- `sort`: Sắp xếp theo ngày (`asc` hoặc `desc`)
-
-Ví dụ:
-```
-GET /api/blogs?search=AI&sort=desc
-```
-
----
-
-## Hình ảnh Demo
-
-### Trang đăng nhập
-<div align="center">
-  <img src="AnhDemo/login.png" alt="Login Page" width="800"/>
-  <p><i>Giao diện đăng nhập đơn giản, hỗ trợ đăng nhập bằng email/password</i></p>
-</div>
-
----
-
-### Trang chủ
-<div align="center">
-  <img src="AnhDemo/trangchu.png" alt="Homepage" width="800"/>
-  <p><i>Hiển thị các bài viết nổi bật, thống kê và danh mục công nghệ</i></p>
-</div>
-
----
-
-### Danh sách bài viết
-<div align="center">
-  <img src="AnhDemo/blog.png" alt="Blog List" width="800"/>
-  <p><i>Danh sách blog với tìm kiếm, sắp xếp và filter theo category</i></p>
-</div>
-
----
-
-### Tạo bài viết mới
-<div align="center">
-  <img src="AnhDemo/newblog.png" alt="Create New Blog" width="800"/>
-  <p><i>Form tạo blog với editor, upload ảnh, tags và preview</i></p>
-</div>
-
----
-
-### Sửa bài viết
-<div align="center">
-  <img src="AnhDemo/fixblog.png" alt="Edit Blog" width="800"/>
-  <p><i>Chỉnh sửa nội dung bài viết đã có</i></p>
-</div>
-
----
-
-### Chi tiết bài viết
-<div align="center">
-  <img src="AnhDemo/details.png" alt="Blog Detail" width="800"/>
-  <p><i>Hiển thị nội dung đầy đủ với author info, category, và ảnh minh họa</i></p>
-</div>
-
----
-
-## Khắc phục sự cố
-
-### Lỗi: Không kết nối được database
-
-**Nguyên nhân:** Container MySQL chưa chạy hoặc chưa khởi động xong
-
-**Giải pháp:**
-1. Kiểm tra trạng thái containers:
-   ```bash
-   docker-compose ps
-   ```
-2. Nếu MySQL chưa chạy, khởi động lại:
-   ```bash
-   docker-compose down
-   docker-compose up -d
-   ```
-3. Kiểm tra logs MySQL:
-   ```bash
-   docker-compose logs mysql
-   ```
-
----
-
-### Lỗi: CORS Policy
-
-**Nguyên nhân:** Frontend gọi API bị chặn bởi CORS
-
-**Giải pháp:**
-
-Kiểm tra file `backend/config/cors.php`:
-
-```php
-'paths' => ['api/*'],
-'allowed_origins' => ['*'],
-'allowed_methods' => ['*'],
-'allowed_headers' => ['*'],
-```
-
-Sau đó clear cache:
+Token hết hạn hoặc chưa đăng nhập. Hãy đăng nhập lại:
 ```bash
-docker-compose exec laravel php artisan config:clear
-docker-compose exec laravel php artisan cache:clear
+# Có thể dùng curl để test
+curl -X POST http://localhost:8000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@example.com","password":"admin123"}'
 ```
 
----
+### Lỗi: Upload ảnh thất bại (422)
 
-### Lỗi: Token không hoạt động
-
-**Nguyên nhân:** Token hết hạn hoặc header sai
-
-**Giải pháp:**
-
-Đảm bảo gửi header đúng:
-```
-Authorization: Bearer {your_token_here}
-```
-
-Nếu vẫn lỗi, đăng xuất và đăng nhập lại để lấy token mới.
-
----
-
-### Lỗi: Upload ảnh thất bại
-
-**Nguyên nhân:** Chưa tạo symbolic link
-
-**Giải pháp:**
-
+Kiểm tra storage link trong container Laravel:
 ```bash
 docker-compose exec laravel php artisan storage:link
 ```
 
-Kiểm tra folder `backend/storage/app/public/blogs` đã tồn tại chưa.
+### Lỗi: Ảnh không hiển thị
+
+Frontend sử dụng Vite proxy để load ảnh từ `/storage/*`. Kiểm tra:
+- Backend đang chạy ở `http://localhost:8000`
+- File ảnh tồn tại trong `backend/storage/app/public/blogs/`
+
+### Lỗi: Port 5173 đã được sử dụng
+
+```bash
+# Kiểm tra process nào đang dùng port 5173
+netstat -ano | findstr :5173
+
+# Kill process đó (thay PID bằng số ở cột cuối)
+taskkill /F /PID <PID>
+# Sau đó chạy lại npm run dev
+```
+
+### Lỗi: Database bị lỗi encoding (tiếng Việt hiện sai)
+
+Import lại database với đúng charset:
+```bash
+docker-compose down -v    # Xóa volume database
+docker-compose up -d      # Tạo lại từ reset-database.sql
+```
+
+### Lỗi: `npm install` thất bại
+
+```bash
+# Xóa node_modules và cài lại
+rm -rf node_modules package-lock.json
+npm install
+```
+
+### Reset toàn bộ dự án
+
+```bash
+# Dừng và xóa database
+docker-compose down -v
+
+# Khởi động lại
+docker-compose up -d
+
+# Chạy frontend
+cd frontend-v2
+npm run dev
+```
 
 ---
 
-## Contributors
+## 📸 Demo
+
+| Trang | Mô tả |
+|-------|-------|
+|  Trang chủ | Danh sách bài viết với ảnh, danh mục, tìm kiếm |
+|  Chi tiết bài viết | Nội dung đầy đủ + bình luận |
+|  Đăng nhập | Form đăng nhập admin |
+|  Tạo bài viết | Form tạo bài viết với upload ảnh |
+|  Sửa bài viết | Chỉnh sửa nội dung bài viết hiện có |
+|  Dashboard | Quản lý bài viết, thống kê |
+
+---
+
+##  Thành Viên Nhóm
 
 <div align="center">
   <table>
@@ -549,38 +378,37 @@ Kiểm tra folder `backend/storage/app/public/blogs` đã tồn tại chưa.
       <td align="center">
         <a href="https://github.com/QuyTran25">
           <img src="https://github.com/QuyTran25.png" width="100px;" alt="QuyTran25"/>
-          <br />
-          <sub><b>Huynh Thi Quy Tran</b></sub>
+          <br /><sub><b>Huỳnh Thị Quý Trân</b></sub>
         </a>
       </td>
       <td align="center">
         <a href="https://github.com/akhoa79">
           <img src="https://github.com/akhoa79.png" width="100px;" alt="akhoa79"/>
-          <br />
-          <sub><b>Nguyen Do Anh Khoa</b></sub>
+          <br /><sub><b>Nguyễn Đỗ Anh Khoa</b></sub>
         </a>
       </td>
       <td align="center">
         <a href="https://github.com/Shinnie102">
           <img src="https://github.com/Shinnie102.png" width="100px;" alt="Shinnie102"/>
-          <br />
-          <sub><b>Nguyen Thi Thuy Trang</b></sub>
+          <br /><sub><b>Nguyễn Thị Thùy Trang</b></sub>
         </a>
       </td>
       <td align="center">
         <a href="https://github.com/khain7728">
           <img src="https://github.com/khain7728.png" width="100px;" alt="khain7728"/>
-          <br />
-          <sub><b>Nguyen Quoc Khai</b></sub>
+          <br /><sub><b>Nguyễn Quốc Khải</b></sub>
         </a>
       </td>
       <td align="center">
         <a href="https://github.com/LeVietSangg">
           <img src="https://github.com/LeVietSangg.png" width="100px;" alt="LeVietSangg"/>
-          <br />
-          <sub><b>Le Viet Sang</b></sub>
+          <br /><sub><b>Lê Viết Sang</b></sub>
         </a>
       </td>
     </tr>
   </table>
 </div>
+
+---
+
+
