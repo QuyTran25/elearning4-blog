@@ -159,7 +159,10 @@ export default function BlogDetailPage() {
   // Simple client-side sentiment classifier helper
   const classifySentiment = (text) => {
     const positiveWords = ['hay', 'tốt', 'cảm ơn', 'tuyệt', 'chi tiết', 'hữu ích', 'like', 'yêu thích', 'thanks', 'great', 'useful'];
+    const negativeWords = ['không hay', 'không tốt', 'dở', 'tệ', 'kém', 'chán', 'ghét', 'chửi', 'tục'];
     const lower = text.toLowerCase();
+    const isNegative = negativeWords.some(word => lower.includes(word));
+    if (isNegative) return 'neutral';
     const isPositive = positiveWords.some(word => lower.includes(word));
     return isPositive ? 'positive' : 'neutral';
   };
