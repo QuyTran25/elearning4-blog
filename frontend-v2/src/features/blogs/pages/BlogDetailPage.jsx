@@ -78,8 +78,8 @@ export default function BlogDetailPage() {
             author: c.author_name || 'Khách',
             avatarInitials: (c.author_name || 'K').charAt(0).toUpperCase(),
             time: formatCommentTime(c.created_at),
-            sentiment: classifySentiment(c.content),
-            content: c.content,
+            sentiment: classifySentiment(c.displayed_text || c.content),
+            content: c.displayed_text || c.content,
             likes: 0,
             replies: 0
           }));
