@@ -182,23 +182,20 @@ export default function BlogDetailPage() {
           setModData(res);
           setShowModModal(true);
         } else {
-          // ALLOW or SUGGEST_FLEXIBLE (auto-censored)
-          const sentiment = classifySentiment(res.censored_text || newComment);
+          // ALLOW
+          const sentiment = classifySentiment(newComment);
           const newCommentObj = {
             id: res.comment_id,
             author: user?.name || 'Khách',
             avatarInitials: (user?.name || 'K').charAt(0).toUpperCase(),
             time: 'Vừa xong',
             sentiment: sentiment,
-            content: res.censored_text || newComment, // Use censored text if available
+            content: newComment,
             likes: 0,
             replies: 0
           };
           setComments(prev => [newCommentObj, ...prev]);
           setNewComment('');
-          if (res.action === 'SUGGEST_FLEXIBLE') {
-            alert('Bình luận của bạn chứa một số từ ngữ nhạy cảm và đã được tự động che giấu.');
-          }
         }
       } else {
         alert('Lỗi: ' + (res?.message || 'Không thể gửi bình luận'));
