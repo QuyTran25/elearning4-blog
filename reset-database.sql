@@ -1,4 +1,5 @@
 -- XÓA VÀ TẠO LẠI DATABASE ĐƠN GIẢN
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci;
 DROP DATABASE IF EXISTS `e4-blog`;
 CREATE DATABASE `e4-blog` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE `e4-blog`;

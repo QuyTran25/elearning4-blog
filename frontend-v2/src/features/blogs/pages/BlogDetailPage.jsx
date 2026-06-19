@@ -21,6 +21,10 @@ export default function BlogDetailPage() {
   const [likesCount, setLikesCount] = useState(1204);
   const [hasLiked, setHasLiked] = useState(false);
 
+  // Moderation modal state
+  const [showModModal, setShowModModal] = useState(false);
+  const [modData, setModData] = useState(null);
+
   // Scroll to top on id change
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -166,24 +170,33 @@ export default function BlogDetailPage() {
 
     try {
       const res = await commentService.createComment(blog.id, {
-        author_name: 'Khách',
+        author_name: user?.name || 'Khách',
         content: newComment,
       });
 
       if (res && res.success) {
-        const sentiment = classifySentiment(newComment);
-        const newCommentObj = {
-          id: res.data.id,
-          author: 'Khách',
-          avatarInitials: 'K',
-          time: 'Vừa xong',
-          sentiment: sentiment,
-          content: newComment,
-          likes: 0,
-          replies: 0
-        };
-        setComments(prev => [newCommentObj, ...prev]);
-        setNewComment('');
+        if (res.action === 'SUGGEST_STRICT') {
+          setModData(res);
+          setShowModModal(true);
+        } else {
+          // ALLOW or SUGGEST_FLEXIBLE (auto-censored)
+          const sentiment = classifySentiment(res.censored_text || newComment);
+          const newCommentObj = {
+            id: res.comment_id,
+            author: user?.name || 'Khách',
+            avatarInitials: (user?.name || 'K').charAt(0).toUpperCase(),
+            time: 'Vừa xong',
+            sentiment: sentiment,
+            content: res.censored_text || newComment, // Use censored text if available
+            likes: 0,
+            replies: 0
+          };
+          setComments(prev => [newCommentObj, ...prev]);
+          setNewComment('');
+          if (res.action === 'SUGGEST_FLEXIBLE') {
+            alert('Bình luận của bạn chứa một số từ ngữ nhạy cảm và đã được tự động che giấu.');
+          }
+        }
       } else {
         alert('Lỗi: ' + (res?.message || 'Không thể gửi bình luận'));
       }
@@ -193,6 +206,44 @@ export default function BlogDetailPage() {
         || 'Có lỗi xảy ra khi gửi bình luận';
       alert(errMsg);
       console.error('Submit comment error:', error);
+    }
+  };
+
+  const handleModerationConfirm = async (choice) => {
+    try {
+      const res = await commentService.confirmPost(blog.id, {
+        comment_id: modData.comment_id,
+        username: user?.name || 'Khách',
+        user_choice: choice,
+        new_text: choice === 'y' ? modData.smart_text : null
+      });
+
+      if (res.success) {
+        if (choice === 'y') {
+          const sentiment = classifySentiment(modData.smart_text);
+          const newCommentObj = {
+            id: modData.comment_id,
+            author: user?.name || 'Khách',
+            avatarInitials: (user?.name || 'K').charAt(0).toUpperCase(),
+            time: 'Vừa xong',
+            sentiment: sentiment,
+            content: modData.smart_text,
+            likes: 0,
+            replies: 0
+          };
+          setComments(prev => [newCommentObj, ...prev]);
+          setNewComment('');
+          alert('Bình luận đã được đăng với nội dung chỉnh sửa.');
+        } else {
+          setNewComment('');
+          alert('Bình luận đã bị hủy bỏ do vi phạm.');
+        }
+      }
+    } catch (error) {
+      alert('Có lỗi khi xử lý quyết định của bạn.');
+    } finally {
+      setShowModModal(false);
+      setModData(null);
     }
   };
 
@@ -582,6 +633,59 @@ export default function BlogDetailPage() {
 
       </div>
       </div>
+
+      {/* Moderation Modal */}
+      {showModModal && modData && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden border border-red-100">
+            <div className="bg-red-50 p-6 border-b border-red-100">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-red-100 text-red-600 rounded-full flex items-center justify-center">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                </div>
+                <h3 className="font-serif text-xl font-bold text-red-900">Phát hiện nội dung nhạy cảm</h3>
+              </div>
+            </div>
+            
+            <div className="p-6 space-y-4">
+              <p className="text-slate-700 text-sm">{modData.message}</p>
+              
+              <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                <p className="text-xs font-bold text-slate-500 uppercase mb-1">Nội dung ban đầu của bạn:</p>
+                <p className="text-slate-800 line-through opacity-70">{modData.original_text}</p>
+              </div>
+
+              {modData.smart_text && (
+                <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
+                  <p className="text-xs font-bold text-emerald-600 uppercase mb-1">Gợi ý chỉnh sửa:</p>
+                  <p className="text-emerald-900 font-medium">{modData.smart_text}</p>
+                </div>
+              )}
+
+              <p className="text-sm text-slate-500 italic mt-2">
+                Bạn có đồng ý sử dụng gợi ý chỉnh sửa này không? Nếu từ chối, bình luận của bạn sẽ bị hủy bỏ và hành vi vi phạm sẽ được ghi nhận.
+              </p>
+            </div>
+
+            <div className="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-end gap-3">
+              <button
+                onClick={() => handleModerationConfirm('n')}
+                className="px-5 py-2 bg-white border border-slate-200 text-slate-700 rounded-lg text-sm font-bold hover:bg-slate-50 transition-colors"
+              >
+                Hủy bỏ bình luận
+              </button>
+              <button
+                onClick={() => handleModerationConfirm('y')}
+                className="px-5 py-2 bg-[#1A146B] text-white rounded-lg text-sm font-bold shadow-md hover:bg-[#1A146B]/90 transition-colors"
+              >
+                Đồng ý chỉnh sửa
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -7,6 +7,10 @@ services:
       MYSQL_DATABASE: e4-blog
       MYSQL_USER: e4user
       MYSQL_PASSWORD: password
+      MYSQL_INITDB_SKIP_TZINFO: "true"
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_SET_CHARSET: "utf8mb4"
+      MYSQL_COLLATION: "utf8mb4_unicode_ci"
     ports:
       - "3307:3306"
     volumes:
@@ -56,6 +60,21 @@ services:
              php artisan cache:clear &&
              php artisan storage:link &&
              php artisan serve --host=0.0.0.0 --port=8000"
+
+  ai-service:
+    build:
+      context: ../AI_Toxic_Comment_Detection
+      dockerfile: backend/Dockerfile
+    container_name: e4blog-ai
+    ports:
+      - "5000:5000"
+    volumes:
+      - ../AI_Toxic_Comment_Detection/backend:/app/backend
+      - ../AI_Toxic_Comment_Detection/models:/app/models
+      - ../AI_Toxic_Comment_Detection/data:/app/data
+    networks:
+      - e4blog-network
+    command: python -m uvicorn backend.main:app --host 0.0.0.0 --port 5000
 
 volumes:
   mysql_data:

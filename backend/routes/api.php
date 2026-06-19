@@ -8,18 +8,9 @@ use App\Http\Controllers\Api\AuthController;
 |--------------------------------------------------------------------------
 | API Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
 */
 
 Route::post('/auth/login', [AuthController::class, 'login']);
-
-// Route đăng ký - ĐÃ VÔ HIỆU HÓA (chỉ admin được tạo sẵn)
-// Route::post('/register', [AuthController::class, 'register']);
-
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -36,14 +27,20 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/blogs', [BlogController::class, 'store']);
     Route::put('/blogs/{id}', [BlogController::class, 'update']);
     Route::delete('/blogs/{id}', [BlogController::class, 'destroy']);
-    Route::post('/blogs/upload-image', [BlogController::class, 'upload']); // Upload ảnh
+    Route::post('/blogs/upload-image', [BlogController::class, 'upload']);
 });
 
 // Categories (public)
 use App\Http\Controllers\Api\CategoryController;
 Route::get('/categories', [CategoryController::class, 'index']);
 
-// Comments (public: ai cũng có thể đọc và bình luận)
+// Comments with AI Moderation (public)
 use App\Http\Controllers\Api\CommentController;
 Route::get('/blogs/{blogId}/comments', [CommentController::class, 'index']);
 Route::post('/blogs/{blogId}/comments', [CommentController::class, 'store']);
+Route::post('/blogs/{blogId}/comments/classify', [CommentController::class, 'quickCheck']);
+Route::post('/blogs/{blogId}/comments/confirm', [CommentController::class, 'confirmPost']);
+
+// Moderation (public for admin dashboard)
+Route::get('/moderation/logs', [CommentController::class, 'getModerationLogs']);
+Route::get('/moderation/stats', [CommentController::class, 'getModerationStats']);

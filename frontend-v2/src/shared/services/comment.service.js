@@ -2,32 +2,39 @@ import apiClient from './api';
 
 /**
  * Lấy danh sách bình luận của một bài viết
- * GET /api/blogs/{blogId}/comments
  */
 export const getComments = async (blogId) => {
-  try {
-    const response = await apiClient.get(`/blogs/${blogId}/comments`);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const response = await apiClient.get(`/blogs/${blogId}/comments`);
+  return response.data;
 };
 
 /**
- * Tạo bình luận mới
- * POST /api/blogs/{blogId}/comments
- * Body: { author_name: string, content: string }
+ * Tạo bình luận mới (gửi qua AI classify)
  */
 export const createComment = async (blogId, data) => {
-  try {
-    const response = await apiClient.post(`/blogs/${blogId}/comments`, data);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const response = await apiClient.post(`/blogs/${blogId}/comments`, data);
+  return response.data;
+};
+
+/**
+ * Kiểm tra thô tục nhanh (type-ahead)
+ */
+export const quickCheck = async (blogId, text) => {
+  const response = await apiClient.post(`/blogs/${blogId}/comments/classify`, { text });
+  return response.data;
+};
+
+/**
+ * Confirm post (y/n)
+ */
+export const confirmPost = async (blogId, data) => {
+  const response = await apiClient.post(`/blogs/${blogId}/comments/confirm`, data);
+  return response.data;
 };
 
 export default {
   getComments,
   createComment,
+  quickCheck,
+  confirmPost,
 };

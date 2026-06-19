@@ -13,6 +13,17 @@ class Comment extends Model
         'blog_id',
         'author_name',
         'content',
+        'displayed_text',
+        'mlp_label',
+        'mlp_confidence',
+        'bad_words',
+        'action',
+        'status',
+    ];
+
+    protected $casts = [
+        'bad_words' => 'array',
+        'mlp_confidence' => 'float',
     ];
 
     // Quan hệ với Blog
