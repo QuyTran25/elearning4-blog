@@ -44,3 +44,8 @@ Route::post('/blogs/{blogId}/comments/confirm', [CommentController::class, 'conf
 // Moderation (public for admin dashboard)
 Route::get('/moderation/logs', [CommentController::class, 'getModerationLogs']);
 Route::get('/moderation/stats', [CommentController::class, 'getModerationStats']);
+
+// Comment actions (Admin/Moderator)
+Route::get('/comments/{commentId}/detail', [CommentController::class, 'getCommentDetail']);
+Route::delete('/comments/{commentId}', [CommentController::class, 'destroy']);
+

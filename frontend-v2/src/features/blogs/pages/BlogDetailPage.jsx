@@ -25,10 +25,28 @@ export default function BlogDetailPage() {
   const [showModModal, setShowModModal] = useState(false);
   const [modData, setModData] = useState(null);
 
-  // Scroll to top on id change
+  // Scroll to top on id change (but skip if there's a comment hash)
   useEffect(() => {
-    window.scrollTo(0, 0);
+    if (!window.location.hash) {
+      window.scrollTo(0, 0);
+    }
   }, [id]);
+
+  // Auto-scroll to highlighted comment from hash (e.g. /blog/1#comment-5)
+  useEffect(() => {
+    if (!window.location.hash || comments.length === 0) return;
+    const timer = setTimeout(() => {
+      const el = document.getElementById(window.location.hash.slice(1));
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        el.classList.add('ring-2', 'ring-[#1A146B]', 'ring-offset-2', 'transition-all');
+        setTimeout(() => {
+          el.classList.remove('ring-2', 'ring-[#1A146B]', 'ring-offset-2');
+        }, 3000);
+      }
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [comments]);
 
   useEffect(() => {
     const fetchBlogDetail = async () => {
@@ -80,7 +98,9 @@ export default function BlogDetailPage() {
             time: formatCommentTime(c.created_at),
             content: c.displayed_text || c.content,
             likes: 0,
-            replies: 0
+            replies: 0,
+            status: c.status,
+            blog_id: c.blog_id
           }));
           setComments(mapped);
         } else {
@@ -229,6 +249,24 @@ export default function BlogDetailPage() {
     } finally {
       setShowModModal(false);
       setModData(null);
+    }
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    if (!window.confirm('Bạn có chắc chắn muốn xóa bình luận này?')) {
+      return;
+    }
+    try {
+      const res = await commentService.deleteComment(commentId);
+      if (res.success) {
+        setComments(prev => prev.filter(c => c.id !== commentId));
+        alert('Đã xóa bình luận thành công!');
+      } else {
+        alert('Lỗi: ' + res.message);
+      }
+    } catch (error) {
+      console.error(error);
+      alert('Có lỗi xảy ra khi xóa bình luận.');
     }
   };
 
@@ -533,7 +571,7 @@ export default function BlogDetailPage() {
             {/* Comments list with sentiment classification */}
             <div className="space-y-4 pt-2">
               {comments.map(c => (
-                <div key={c.id} className="bg-[#F2F4F6]/50 border border-slate-200/40 rounded-2xl p-5 sm:p-6 space-y-4">
+                <div key={c.id} id={`comment-${c.id}`} className="bg-[#F2F4F6]/50 border border-slate-200/40 rounded-2xl p-5 sm:p-6 space-y-4 transition-all duration-500">
                   <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
                       {renderAvatar(c.author, 'bg-slate-200 text-slate-700', 'w-10 h-10')}
@@ -551,9 +589,17 @@ export default function BlogDetailPage() {
                   </p>
 
                   <div className="flex items-center gap-4 pl-13 text-xs text-slate-400 font-semibold">
-                    <button className="flex items-center gap-1 hover:text-[#1A146B] transition-colors">
+                    <button
+                      onClick={() => {
+                        const updated = comments.map(cm =>
+                          cm.id === c.id ? { ...cm, likes: cm.likes + 1 } : cm
+                        );
+                        setComments(updated);
+                      }}
+                      className="flex items-center gap-1 hover:text-[#1A146B] transition-colors"
+                    >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M14 10h4.757a2.243 2.243 0 012.243 2.243v3.89c0 .445-.252.85-.656 1.053l-3 1.51a2.243 2.243 0 01-1.053.268H14M8.684 10.742l4.622-2.312m0 0a3 3 0 11.268-1.742l-4.622 2.312m0 0a3 3 0 11-.268 1.742m0 0a3 3 0 11-4.622-2.312" />
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                       </svg>
                       <span>Thích ({c.likes})</span>
                     </button>
@@ -561,6 +607,20 @@ export default function BlogDetailPage() {
                     <button className="hover:text-[#1A146B] transition-colors">
                       Trả lời
                     </button>
+                    {isAuthenticated && user?.role === 'admin' && (
+                      <>
+                        <span>•</span>
+                        <button
+                          onClick={() => handleDeleteComment(c.id)}
+                          className="flex items-center gap-1 text-red-500 hover:text-red-700 transition-colors"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                          <span>Xóa</span>
+                        </button>
+                      </>
+                    )}
                   </div>
                 </div>
               ))}

@@ -255,7 +255,7 @@ class CommentController extends Controller
      */
     public function getModerationLogs()
     {
-        $logs = Comment::orderBy('created_at', 'desc')
+        $logs = Comment::with('blog')->orderBy('created_at', 'desc')
             ->take(1000)
             ->get();
 
@@ -266,35 +266,46 @@ class CommentController extends Controller
     }
 
     /**
-     * Lấy số liệu thống kê kiểm duyệt cho Admin Dashboard
-     * GET /api/moderation/stats
+     * Xóa bình luận (Admin)
+     * DELETE /api/comments/{commentId}
      */
-    public function getModerationStats()
+    public function destroy($commentId)
     {
-        $totalComments = Comment::count();
-        
-        $statuses = Comment::selectRaw('status, count(*) as count')
-            ->groupBy('status')
-            ->pluck('count', 'status')
-            ->toArray();
+        $comment = Comment::find($commentId);
 
-        $users = ModerationUser::selectRaw('risk_level, count(*) as count')
-            ->groupBy('risk_level')
-            ->pluck('count', 'risk_level')
-            ->toArray();
+        if (!$comment) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Không tìm thấy bình luận'
+            ], 404);
+        }
 
-        $stats = [
-            'total_comments' => $totalComments,
-            'clean' => $statuses['posted'] ?? 0,
-            'toxic' => ($statuses['posted_censored'] ?? 0) + ($statuses['posted_smart'] ?? 0),
-            'insult' => $statuses['blocked'] ?? 0,
-            'statuses' => $statuses,
-            'users' => $users,
-        ];
+        $comment->delete();
 
         return response()->json([
             'success' => true,
-            'data' => $stats
+            'message' => 'Đã xóa bình luận thành công'
+        ]);
+    }
+
+    /**
+     * Lấy chi tiết 1 bình luận theo ID (bao gồm thông tin bài viết)
+     * GET /api/comments/{commentId}/detail
+     */
+    public function getCommentDetail($commentId)
+    {
+        $comment = Comment::with('blog')->find($commentId);
+
+        if (!$comment) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Không tìm thấy bình luận'
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $comment
         ]);
     }
 }

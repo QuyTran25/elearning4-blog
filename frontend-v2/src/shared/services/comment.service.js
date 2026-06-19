@@ -32,9 +32,27 @@ export const confirmPost = async (blogId, data) => {
   return response.data;
 };
 
+/**
+ * Xóa bình luận (Admin)
+ */
+export const deleteComment = async (commentId) => {
+  const response = await apiClient.delete(`/comments/${commentId}`);
+  return response.data;
+};
+
+/**
+ * Lấy chi tiết bình luận (Admin)
+ */
+export const getCommentDetail = async (commentId) => {
+  const response = await apiClient.get(`/comments/${commentId}/detail`);
+  return response.data;
+};
+
 export default {
   getComments,
   createComment,
   quickCheck,
   confirmPost,
+  deleteComment,
+  getCommentDetail,
 };
