@@ -255,9 +255,8 @@ class CommentController extends Controller
      */
     public function getModerationLogs()
     {
-        $logs = ModerationLog::with(['comment'])
-            ->orderBy('logged_at', 'desc')
-            ->take(100)
+        $logs = Comment::orderBy('created_at', 'desc')
+            ->take(1000)
             ->get();
 
         return response()->json([

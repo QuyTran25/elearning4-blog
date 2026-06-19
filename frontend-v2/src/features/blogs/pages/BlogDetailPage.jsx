@@ -78,7 +78,6 @@ export default function BlogDetailPage() {
             author: c.author_name || 'Khách',
             avatarInitials: (c.author_name || 'K').charAt(0).toUpperCase(),
             time: formatCommentTime(c.created_at),
-            sentiment: classifySentiment(c.displayed_text || c.content),
             content: c.displayed_text || c.content,
             likes: 0,
             replies: 0
@@ -156,16 +155,6 @@ export default function BlogDetailPage() {
     }
   };
 
-  // Simple client-side sentiment classifier helper
-  const classifySentiment = (text) => {
-    const positiveWords = ['hay', 'tốt', 'cảm ơn', 'tuyệt', 'chi tiết', 'hữu ích', 'like', 'yêu thích', 'thanks', 'great', 'useful'];
-    const negativeWords = ['không hay', 'không tốt', 'dở', 'tệ', 'kém', 'chán', 'ghét', 'chửi', 'tục'];
-    const lower = text.toLowerCase();
-    const isNegative = negativeWords.some(word => lower.includes(word));
-    if (isNegative) return 'neutral';
-    const isPositive = positiveWords.some(word => lower.includes(word));
-    return isPositive ? 'positive' : 'neutral';
-  };
 
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
@@ -183,13 +172,11 @@ export default function BlogDetailPage() {
           setShowModModal(true);
         } else {
           // ALLOW
-          const sentiment = classifySentiment(newComment);
           const newCommentObj = {
             id: res.comment_id,
             author: user?.name || 'Khách',
             avatarInitials: (user?.name || 'K').charAt(0).toUpperCase(),
             time: 'Vừa xong',
-            sentiment: sentiment,
             content: newComment,
             likes: 0,
             replies: 0
@@ -220,13 +207,11 @@ export default function BlogDetailPage() {
 
       if (res.success) {
         if (choice === 'y') {
-          const sentiment = classifySentiment(modData.smart_text);
           const newCommentObj = {
             id: modData.comment_id,
             author: user?.name || 'Khách',
             avatarInitials: (user?.name || 'K').charAt(0).toUpperCase(),
             time: 'Vừa xong',
-            sentiment: sentiment,
             content: modData.smart_text,
             likes: 0,
             replies: 0
@@ -555,16 +540,6 @@ export default function BlogDetailPage() {
                       <div>
                         <div className="flex items-center gap-2">
                           <p className="text-sm font-bold text-[#191C1E]">{c.author}</p>
-                          {/* Sentiment Tag */}
-                          {c.sentiment === 'positive' ? (
-                            <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full border border-emerald-200/60 bg-emerald-50 text-emerald-700 tracking-wider">
-                              Tích cực
-                            </span>
-                          ) : (
-                            <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full border border-slate-200 bg-slate-100 text-slate-500 tracking-wider">
-                              Trung lập
-                            </span>
-                          )}
                         </div>
                         <p className="text-[10px] text-slate-400 mt-0.5">{c.time}</p>
                       </div>
