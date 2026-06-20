@@ -95,77 +95,91 @@ elearning4-blog/
 
 ---
 
-##  Hướng Dẫn Cài Đặt & Chạy Dự Án
+##  Hướng Dẫn Cài Đặt & Chạy Dự Án (Fullstack + AI)
 
-### Yêu Cầu Hệ Thống
+### Yêu Cầu Hệ Thống & Cấu Trúc Thư Mục
+Hệ thống sử dụng Docker Compose để chạy cả **Laravel (Backend)**, **MySQL (Database)**, và **AI Service (Python FastAPI)**.
+Để hệ thống hoạt động, **bắt buộc** phải clone 2 kho lưu trữ (`elearning4-blog` và `AI_Toxic_Comment_Detection`) nằm ngang hàng nhau trong cùng một thư mục cha.
+
+```plaintext
+D:/ (hoặc thư mục bất kỳ)
+├── AI_Toxic_Comment_Detection/    # Dự án AI Model
+└── elearning4-blog/               # Dự án Blog (Bạn đang ở đây)
+```
 
 - **Docker Desktop** đã cài đặt và đang chạy
 - **Node.js 18+** (để chạy frontend React)
-- **Git** (clone source code)
-- **Trình duyệt** Chrome / Edge / Firefox
+- **Git** (để clone source code)
 
 ---
 
-### Bước 1: Clone Dự Án
+### Bước 1: Clone 2 kho lưu trữ
+
+Mở terminal tại thư mục cha và chạy:
 
 ```bash
+# Clone dự án AI (nếu chưa có)
+git clone https://github.com/akhoa79/AI_Toxic_Comment_Detection.git
+
+# Clone dự án Blog
 git clone https://github.com/QuyTran25/elearning4-blog.git
+
+# Di chuyển vào thư mục dự án Blog
 cd elearning4-blog
 ```
 
 ---
 
-### Bước 2: Khởi Động Backend (Docker)
+### Bước 2: Khởi Động Hệ Thống Backend Bằng Docker
 
 ```bash
-# Khởi động MySQL + Laravel
-docker-compose up -d
+# Xây dựng và khởi động MySQL, Laravel, và AI Service
+docker-compose up -d --build
 ```
 
 Docker sẽ tự động:
-1. Khởi tạo **MySQL 8.0** (port `3307`)
-2. Import database từ `reset-database.sql` (gồm: users, categories, blogs mẫu)
-3. Cài đặt PHP dependencies (`composer install`)
-4. Tạo storage symbolic link
-5. Khởi động **Laravel API** (port `8000`)
+1. Khởi động **MySQL 8.0** (port `3307`)
+2. Khởi động **Laravel API** (port `8000`)
+3. Khởi động **AI Service** (port `5000`)
 
-**Kiểm tra trạng thái:**
-
+Kiểm tra trạng thái các container:
 ```bash
 docker-compose ps
 ```
-
-Cả 2 container phải có trạng thái `Up`.\
-Backend chạy tại: **http://localhost:8000**
-
-**Xem log nếu cần debug:**
-
-```bash
-docker-compose logs -f laravel
-```
+*(Đảm bảo cả 3 container `e4blog-mysql`, `e4blog-laravel`, và `e4blog-ai` đều ở trạng thái `Up`)*
 
 ---
 
-### Bước 3: Cài Đặt & Chạy Frontend
+### Bước 3: Khởi Tạo Cấu Trúc Database (Bắt buộc)
+
+Mặc dù MySQL có import `reset-database.sql`, tập lệnh đó **chưa có** các bảng kiểm duyệt bình luận mới của AI. Bạn **phải** chạy lệnh sau để Laravel tạo lại toàn bộ bảng và seed dữ liệu mẫu:
 
 ```bash
-# Di chuyển vào thư mục frontend
+docker-compose exec laravel php artisan migrate:fresh --seed
+```
+
+*(Lệnh này sẽ xóa DB cũ, chạy toàn bộ migrations để tạo bảng `users`, `blogs`, `comments`, `moderation_logs`..., và tự động tạo tài khoản Admin).*
+
+---
+
+### Bước 4: Cài Đặt & Chạy Frontend
+
+```bash
+# Chuyển vào thư mục frontend
 cd frontend-v2
 
-# Cài đặt dependencies
+# Cài đặt thư viện
 npm install
 
-# Khởi động dev server
+# Khởi động React Dev Server
 npm run dev
 ```
 
 Frontend chạy tại: **http://localhost:5173** 🎉
 
-> **Lưu ý:** Frontend sử dụng Vite proxy để gọi API backend:
-> - `/api/*` → `http://127.0.0.1:8000/api/*`
-> - `/storage/*` → `http://127.0.0.1:8000/storage/*`
->
-> Không cần cấu hình CORS hay URL tuyệt đối — mọi thứ đã được thiết lập sẵn!
+> **Lưu ý Networking:** Frontend tự động proxy các đường dẫn:
+> - `/api/*` → Laravel API (`http://127.0.0.1:8000/api/*`)
+> - Backend Laravel sẽ gọi nội bộ qua AI Service tại `http://ai-service:5000/api/analyze`
 
 ---
 
@@ -175,49 +189,23 @@ Frontend chạy tại: **http://localhost:5173** 🎉
 |-------|----------|---------|
 | `admin@example.com` | `admin123` |  Admin |
 
-> Admin có toàn quyền: tạo/sửa/xóa bài viết, upload ảnh, xem dashboard và moderation logs.
+> Admin có toàn quyền: tạo/sửa/xóa bài viết, upload ảnh, xem Moderation Logs, xóa và quản lý bình luận trên blog.
 
 ---
 
 ##  Hướng Dẫn Sử Dụng
 
 ###  Trang Chủ (Guest + Admin)
-
 Mở **http://localhost:5173** để xem trang chủ với:
-- Danh sách bài viết dạng **grid** và **list**
-- Tìm kiếm theo tiêu đề
-- Phân loại theo danh mục
-- Ảnh đại diện cho mỗi bài viết
+- Danh sách bài viết dạng grid và list
+- Tìm kiếm theo tiêu đề và phân loại danh mục
 
-> **Khi đã đăng nhập với admin**: mỗi bài viết sẽ hiển thị icon  (sửa) và  (xóa).
-
-###  Đăng Nhập Admin
-
-1. Click **"Đăng nhập"** ở header
-2. Nhập: `admin@example.com` / `admin123`
-3. Sau khi đăng nhập, bạn sẽ thấy menu **Dashboard** ở header
-
-###  Quản Lý Bài Viết (Admin)
-
-Sau khi đăng nhập, click **Dashboard** hoặc truy cập **http://localhost:5173/admin/dashboard**:
-
-- ** Tạo bài viết mới**: Click "Tạo bài viết mới"
-  - Nhập tiêu đề, chọn danh mục
-  - Upload ảnh đại diện (click vào vùng upload)
-  - Viết nội dung
-  - Click "Xuất bản"
-- ** Sửa bài viết**: Click icon  trên bài viết ở trang chủ hoặc trang chi tiết
-- ** Xóa bài viết**: Click icon  (xác nhận xóa)
-
-###  Bình Luận (Guest + Admin)
-
-Ở trang chi tiết bài viết, mọi người (không cần đăng nhập) có thể:
-- Xem danh sách bình luận
-- Viết bình luận mới
-
-###  Moderation Logs (Admin)
-
-Truy cập **Dashboard → Moderation Logs** để xem lịch sử các bình luận tiêu cực.
+###  Quản Lý & Kiểm Duyệt Bình Luận (Admin)
+1. **Đăng nhập**: Dùng tài khoản admin.
+2. **Comment Logs**: Truy cập **Dashboard → Moderation Logs** để xem toàn bộ bình luận.
+3. Nhấp **"Xem Chi Tiết"** để xem thông tin chẩn đoán từ AI (nhãn `Clean`, `Toxic`, `Insult`, độ tin cậy, và các từ khóa vi phạm).
+4. Nhấp **"Đi đến bình luận"** để hệ thống cuộn thẳng đến vị trí bình luận đó trên giao diện bài viết.
+5. Admin có thể **"Xóa"** bình luận trực tiếp trong bảng Logs hoặc ngay trên giao diện đọc bài viết.
 
 ---
 
@@ -231,17 +219,13 @@ Truy cập **Dashboard → Moderation Logs** để xem lịch sử các bình lu
 |  **Chi tiết bài viết** | Xem nội dung đầy đủ, thông tin tác giả, danh mục, ảnh |
 |  **Đăng nhập Admin** | Xác thực token qua Laravel Sanctum |
 |  **CRUD bài viết** | Tạo/sửa/xóa bài viết (admin only) |
-|  **Upload ảnh** | Upload ảnh đại diện cho bài viết |
-|  **Bình luận** | Xem và viết bình luận (public) |
+|  **Bình luận AI** | Viết bình luận. AI kiểm duyệt tự động (chặn từ tục/bắt tự sửa) |
+|  **Moderation Logs**| Dashboard quản trị kiểm duyệt bình luận, cuộn nhanh, và xóa |
 |  **Dashboard** | Giao diện quản lý admin |
-|  **Tìm kiếm** | Tìm kiếm bài viết theo tiêu đề |
-|  **Danh mục** | 7 danh mục công nghệ khác nhau |
 |  **Responsive** | Giao diện tương thích mọi thiết bị |
 
-###  Chưa Hoàn Thiện
-
-- **Moderation Logs**: API backend chưa kết nối (đang dùng mock data)
-- **Xóa bài viết**: Hiện tại dùng `window.confirm()` — sẽ nâng cấp lên modal
+###  Đang Cải Thiện
+- **Xóa bài viết**: Hiện tại dùng `window.confirm()` — dự kiến sẽ nâng cấp lên custom modal.
 
 ---
 
