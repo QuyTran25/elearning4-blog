@@ -30,6 +30,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/blogs/upload-image', [BlogController::class, 'upload']);
 });
 
+Route::post('/blogs/{id}/like', [BlogController::class, 'toggleLike']);
+
 // Categories (public)
 use App\Http\Controllers\Api\CategoryController;
 Route::get('/categories', [CategoryController::class, 'index']);
@@ -48,4 +50,9 @@ Route::get('/moderation/stats', [CommentController::class, 'getModerationStats']
 // Comment actions (Admin/Moderator)
 Route::get('/comments/{commentId}/detail', [CommentController::class, 'getCommentDetail']);
 Route::delete('/comments/{commentId}', [CommentController::class, 'destroy']);
+
+// Admin reply to comments (cần đăng nhập)
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/comments/{commentId}/reply', [CommentController::class, 'reply']);
+});
 

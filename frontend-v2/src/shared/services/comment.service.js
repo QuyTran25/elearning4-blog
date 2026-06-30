@@ -48,6 +48,14 @@ export const getCommentDetail = async (commentId) => {
   return response.data;
 };
 
+/**
+ * Admin trả lời bình luận
+ */
+export const replyComment = async (commentId, content) => {
+  const response = await apiClient.post(`/comments/${commentId}/reply`, { content });
+  return response.data;
+};
+
 export default {
   getComments,
   createComment,
@@ -55,4 +63,5 @@ export default {
   confirmPost,
   deleteComment,
   getCommentDetail,
+  replyComment,
 };

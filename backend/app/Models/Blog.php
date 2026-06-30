@@ -15,6 +15,7 @@ class Blog extends Model
         'content',
         'image_url',
         'author_id',
+        'likes',
     ];
 
     // Quan hệ với Category

@@ -19,9 +19,11 @@ export const getBlogs = async (params = {}) => {
  * Get single blog by ID
  * Returns full blog object with author info
  */
-export const getBlogById = async (id) => {
+export const getBlogById = async (id, params = {}) => {
   try {
-    const response = await apiClient.get(`/blogs/${id}`);
+    const queryString = new URLSearchParams(params).toString();
+    const url = queryString ? `/blogs/${id}?${queryString}` : `/blogs/${id}`;
+    const response = await apiClient.get(url);
     return response.data;
   } catch (error) {
     throw error;
@@ -82,6 +84,20 @@ export const uploadBlogImage = async (formData) => {
   }
 };
 
+/**
+ * Toggle like/unlike on a blog post
+ * Supports both authenticated users and guests (with guest_token)
+ * Returns: { success: true, liked: bool, likes: number }
+ */
+export const toggleLike = async (id, data = {}) => {
+  try {
+    const response = await apiClient.post(`/blogs/${id}/like`, data);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 // Export as service object
 export default {
   getBlogs,
@@ -90,4 +106,5 @@ export default {
   updateBlog,
   deleteBlog,
   uploadBlogImage,
+  toggleLike,
 };

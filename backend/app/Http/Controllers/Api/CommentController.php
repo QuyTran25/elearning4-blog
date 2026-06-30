@@ -31,8 +31,12 @@ class CommentController extends Controller
         }
 
         $comments = Comment::where('blog_id', $blogId)
+            ->whereNull('parent_id')
             ->whereIn('status', ['posted', 'posted_censored', 'posted_smart'])
             ->orderBy('created_at', 'desc')
+            ->with(['replies' => function ($q) {
+                $q->orderBy('created_at', 'asc');
+            }])
             ->get();
 
         return response()->json([
@@ -307,5 +311,70 @@ class CommentController extends Controller
             'success' => true,
             'data' => $comment
         ]);
+    }
+
+    /**
+     * Admin trả lời bình luận
+     * POST /api/comments/{commentId}/reply
+     */
+    public function reply(Request $request, $commentId)
+    {
+        $request->validate([
+            'content' => 'required|string|max:2000',
+        ]);
+
+        $parentComment = Comment::find($commentId);
+
+        if (!$parentComment) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Không tìm thấy bình luận'
+            ], 404);
+        }
+
+        $user = auth()->user();
+
+        $reply = Comment::create([
+            'blog_id' => $parentComment->blog_id,
+            'parent_id' => $commentId,
+            'author_id' => $user?->id,
+            'author_name' => $user?->name ?? 'Admin',
+            'content' => $request->input('content'),
+            'displayed_text' => $request->input('content'),
+            'mlp_label' => 'Clean',
+            'mlp_confidence' => 1.0,
+            'bad_words' => [],
+            'action' => 'ALLOW',
+            'status' => 'posted',
+            'is_admin_reply' => true,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Trả lời thành công',
+            'data' => $reply,
+        ], 201);
+    }
+
+    /**
+     * Lấy thống kê kiểm duyệt
+     * GET /api/moderation/stats
+     */
+    public function getModerationStats()
+    {
+        try {
+            $stats = [
+                'total_comments' => Comment::count(),
+                'by_status' => Comment::selectRaw('status, COUNT(*) as count')
+                    ->groupBy('status')
+                    ->pluck('count', 'status'),
+                'by_label' => Comment::selectRaw('mlp_label, COUNT(*) as count')
+                    ->groupBy('mlp_label')
+                    ->pluck('count', 'mlp_label'),
+            ];
+            return response()->json(['success' => true, 'data' => $stats]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'data' => []]);
+        }
     }
 }

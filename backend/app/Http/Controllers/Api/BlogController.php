@@ -8,6 +8,7 @@ use App\Http\Requests\StoreBlogRequest;
 use App\Http\Requests\UpdateBlogRequest;
 use App\Http\Requests\UploadImageRequest;
 use App\Models\Blog;
+use App\Models\BlogLike;
 use Illuminate\Support\Facades\Storage;
 
 class BlogController extends Controller
@@ -41,7 +42,7 @@ class BlogController extends Controller
     }
 
     // 🟢 2. Xem chi tiết blog
-    public function show($id)
+    public function show(Request $request, $id)
     {
         $blog = Blog::with(['author', 'category'])->find($id);
 
@@ -52,9 +53,28 @@ class BlogController extends Controller
             ], 404);
         }
 
+        // Kiểm tra user hiện tại đã like chưa
+        $liked = false;
+        $user = auth('sanctum')->user();
+        if ($user) {
+            $liked = BlogLike::where('blog_id', $id)
+                ->where('user_id', $user->id)
+                ->exists();
+        } else {
+            $guestToken = $request->query('guest_token');
+            if ($guestToken) {
+                $liked = BlogLike::where('blog_id', $id)
+                    ->where('guest_token', $guestToken)
+                    ->exists();
+            }
+        }
+
+        $blogData = $blog->toArray();
+        $blogData['liked'] = $liked;
+
         return response()->json([
             'success' => true,
-            'data' => $blog
+            'data' => $blogData
         ]);
     }
 
@@ -182,5 +202,65 @@ class BlogController extends Controller
             'success' => false,
             'message' => 'Không có file ảnh'
         ], 400);
+    }
+
+    // 🟢 7. Like/Unlike blog (cả cho khách + user đăng nhập)
+    public function toggleLike(Request $request, $id)
+    {
+        $blog = Blog::find($id);
+
+        if (!$blog) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Không tìm thấy bài viết'
+            ], 404);
+        }
+
+        $user = auth('sanctum')->user();
+        $guestToken = $request->input('guest_token');
+
+        // User đăng nhập: dùng user_id
+        if ($user) {
+            $existingLike = BlogLike::where('blog_id', $id)
+                ->where('user_id', $user->id)
+                ->first();
+        } else {
+            // Guest: dùng guest_token
+            if (!$guestToken) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Thiếu guest_token'
+                ], 400);
+            }
+            $existingLike = BlogLike::where('blog_id', $id)
+                ->where('guest_token', $guestToken)
+                ->first();
+        }
+
+        if ($existingLike) {
+            // Unlike
+            $existingLike->delete();
+            $blog->decrement('likes');
+            $liked = false;
+        } else {
+            // Like
+            $likeData = ['blog_id' => $id];
+            if ($user) {
+                $likeData['user_id'] = $user->id;
+            } else {
+                $likeData['guest_token'] = $guestToken;
+            }
+            BlogLike::create($likeData);
+            $blog->increment('likes');
+            $liked = true;
+        }
+
+        $blog->refresh();
+
+        return response()->json([
+            'success' => true,
+            'liked' => $liked,
+            'likes' => $blog->likes,
+        ]);
     }
 }

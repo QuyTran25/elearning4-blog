@@ -403,8 +403,8 @@ export default function ModerationLogsPage() {
                   Đóng
                 </button>
                 <button
-                  onClick={() => navigate(`/blog/${selectedComment.blog_id}#comment-${selectedComment.id}`)}
-                  disabled={selectedComment.status === 'blocked'}
+                  onClick={() => window.open(`/blog/${selectedComment.blog_id}#comment-${selectedComment.id}`, '_blank')}
+                  disabled={selectedComment.status === 'blocked' || selectedComment.status === 'pending_edit'}
                   className="px-5 py-2.5 bg-[#1A146B] text-white rounded-xl text-sm font-bold shadow-md hover:bg-[#0F0B4B] transition-colors disabled:opacity-50 flex items-center gap-2"
                 >
                   🔗 Đi đến bình luận
