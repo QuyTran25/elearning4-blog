@@ -24,9 +24,17 @@ class BlogController extends Controller
 
         $query = Blog::with(['author', 'category']);
 
-        // Tìm kiếm theo tiêu đề
+        // Tìm kiếm theo tiêu đề, nội dung, tags
         if ($request->has('search')) {
-            $query->where('title', 'like', '%' . $request->search . '%');
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', '%' . $search . '%')
+                  ->orWhere('content', 'like', '%' . $search . '%')
+                  ->orWhere('tags', 'like', '%' . $search . '%')
+                  ->orWhereHas('category', function ($cq) use ($search) {
+                      $cq->where('name', 'like', '%' . $search . '%');
+                  });
+            });
         }
 
         // Sắp xếp (mặc định: mới nhất)
@@ -89,6 +97,7 @@ class BlogController extends Controller
             'content' => $request->input('content'),
             'category_id' => $request->input('category_id'),
             'image_url' => $request->input('image_url'),
+            'tags' => $request->input('tags'),
             'author_id' => auth()->id(), // Lấy từ user đã đăng nhập
         ]);
 
@@ -130,6 +139,7 @@ class BlogController extends Controller
             'content' => $request->input('content'),
             'category_id' => $request->input('category_id'),
             'image_url' => $request->input('image_url'),
+            'tags' => $request->input('tags'),
         ]);
 
         // Load lại thông tin author

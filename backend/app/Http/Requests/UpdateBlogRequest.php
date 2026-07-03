@@ -6,21 +6,11 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateBlogRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
     public function authorize()
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, mixed>
-     */
     public function rules()
     {
         return [
@@ -28,14 +18,10 @@ class UpdateBlogRequest extends FormRequest
             'content' => 'required|string|min:10',
             'category_id' => 'nullable|exists:categories,id',
             'image_url' => 'nullable|string|max:500',
+            'tags' => 'nullable|string|max:1000',
         ];
     }
 
-    /**
-     * Get custom error messages for validator errors.
-     *
-     * @return array<string, string>
-     */
     public function messages()
     {
         return [

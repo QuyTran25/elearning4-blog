@@ -87,6 +87,7 @@ export default function EditPostPage() {
     category_id: blog.category_id?.toString() || '',
     content: blog.content,
     image_url: blog.image_url || '',
+    tags: blog.tags || '',
   };
 
   return (

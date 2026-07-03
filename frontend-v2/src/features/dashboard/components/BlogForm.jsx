@@ -9,6 +9,7 @@ export default function BlogForm({ initialData, onSubmit, isSubmitting, mode = '
     category_id: initialData?.category_id || '',
     content: initialData?.content || '',
     image_url: initialData?.image_url || '',
+    tags: initialData?.tags || '',
   });
   const [imagePreview, setImagePreview] = useState(initialData?.image_url ? getFullImageUrl(initialData.image_url) : null);
   const [categories, setCategories] = useState([]);
@@ -28,6 +29,7 @@ export default function BlogForm({ initialData, onSubmit, isSubmitting, mode = '
         category_id: initialData.category_id || '',
         content: initialData.content || '',
         image_url: initialData.image_url || '',
+        tags: initialData.tags || '',
       });
       setImagePreview(initialData.image_url ? getFullImageUrl(initialData.image_url) : null);
     }
@@ -92,6 +94,7 @@ export default function BlogForm({ initialData, onSubmit, isSubmitting, mode = '
       content: formData.content,
       category_id: parseInt(formData.category_id),
       image_url: formData.image_url || null,
+      tags: formData.tags || null,
     };
     onSubmit(payload);
   };
@@ -191,6 +194,22 @@ export default function BlogForm({ initialData, onSubmit, isSubmitting, mode = '
                 className="hidden"
               />
             </div>
+          </div>
+
+          {/* Tags */}
+          <div className="bg-white rounded-3xl border border-[#E2E8F0] p-6">
+            <label className="block font-inter font-bold text-xs text-[#474651] uppercase mb-2">
+              Thẻ (#Tags)
+            </label>
+            <input
+              type="text"
+              name="tags"
+              value={formData.tags}
+              onChange={handleInputChange}
+              placeholder="#laravel, #react, #docker (cách nhau bằng dấu phẩy)"
+              className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-3xl px-4 py-3 font-inter text-sm text-[#191C1E] placeholder-[#CBD5E1] focus:outline-none focus:ring-2 focus:ring-[#1A146B]"
+            />
+            <p className="text-[10px] text-[#94A3B8] mt-2 italic">Nhập các thẻ cách nhau bằng dấu phẩy, ví dụ: #kubernetes, #devops, #scaling</p>
           </div>
 
           {/* Editor */}

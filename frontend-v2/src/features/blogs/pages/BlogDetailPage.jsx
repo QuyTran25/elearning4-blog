@@ -431,10 +431,10 @@ export default function BlogDetailPage() {
                 <svg className="w-5 h-5" fill={hasLiked ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
                 <span>{likesCount.toLocaleString()} thích</span>
               </button>
-              <div className="flex gap-2">
-                <span className="bg-[#ECEEF0] text-[#474651] rounded-full px-4 py-1.5 text-xs font-semibold">#kubernetes</span>
-                <span className="bg-[#ECEEF0] text-[#474651] rounded-full px-4 py-1.5 text-xs font-semibold">#devops</span>
-                <span className="bg-[#ECEEF0] text-[#474651] rounded-full px-4 py-1.5 text-xs font-semibold">#scaling</span>
+              <div className="flex gap-2 flex-wrap">
+                {blog.tags ? blog.tags.split(',').map((tag, i) => (
+                  <span key={i} className="bg-[#ECEEF0] text-[#474651] rounded-full px-4 py-1.5 text-xs font-semibold">{tag.trim()}</span>
+                )) : null}
               </div>
             </div>
 
