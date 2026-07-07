@@ -357,33 +357,68 @@ export default function ModerationLogsPage() {
               )}
 
               {/* Contents */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-red-50 p-4 rounded-xl border border-red-100">
-                  <p className="text-xs font-bold text-red-600 uppercase mb-2">NỘI DUNG GỐC (VI PHẠM)</p>
-                  <p className="text-red-900 italic text-sm">{selectedComment.content}</p>
-                  {selectedComment.bad_words && selectedComment.bad_words.length > 0 && (
-                    <div className="mt-3">
-                      <p className="text-[10px] font-bold text-red-500 uppercase">TỪ TỤC ĐÃ PHÁT HIỆN:</p>
-                      <div className="flex gap-1 flex-wrap mt-1">
-                        {selectedComment.bad_words.map(w => (
-                          <span key={w} className="px-2 py-0.5 bg-red-200 text-red-800 rounded-md text-[10px] font-bold">"{w}"</span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
+              {(() => {
+                const isViolation = selectedComment.mlp_label === 'Toxic' || selectedComment.mlp_label === 'Insult' || selectedComment.status === 'blocked';
+                const isClean = selectedComment.mlp_label === 'Clean' && selectedComment.status !== 'blocked';
+                const hasBadWords = selectedComment.bad_words && selectedComment.bad_words.length > 0;
 
-                <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
-                  <p className="text-xs font-bold text-emerald-600 uppercase mb-2">NỘI DUNG HIỂN THỊ TRÊN BLOG</p>
-                  <p className="text-emerald-900 font-medium text-sm">
-                    {selectedComment.status === 'blocked' ? (
-                      <span className="text-slate-400 italic">Đã bị chặn hoàn toàn, không hiển thị trên blog.</span>
-                    ) : (
-                      selectedComment.displayed_text || selectedComment.content
-                    )}
-                  </p>
-                </div>
-              </div>
+                return (
+                  <div className="grid grid-cols-2 gap-4">
+                    {/* Left panel — original content */}
+                    <div className={`p-4 rounded-xl border ${
+                      isClean
+                        ? 'bg-green-50 border-green-100'
+                        : hasBadWords
+                        ? 'bg-yellow-50 border-yellow-100'
+                        : 'bg-red-50 border-red-100'
+                    }`}>
+                      <p className={`text-xs font-bold uppercase mb-2 ${
+                        isClean
+                          ? 'text-green-600'
+                          : hasBadWords
+                          ? 'text-yellow-700'
+                          : 'text-red-600'
+                      }`}>
+                        {isClean
+                          ? 'NỘI DUNG GỐC'
+                          : hasBadWords
+                          ? 'NỘI DUNG GỐC (CÓ TỪ NHẠY CẢM)'
+                          : 'NỘI DUNG GỐC (VI PHẠM)'}
+                      </p>
+                      <p className={`italic text-sm ${
+                        isClean ? 'text-green-900' : hasBadWords ? 'text-yellow-900' : 'text-red-900'
+                      }`}>
+                        {selectedComment.content}
+                      </p>
+                      {hasBadWords && (
+                        <div className="mt-3">
+                          <p className="text-[10px] font-bold text-yellow-700 uppercase">TỪ NHẠY CẢM ĐÃ PHÁT HIỆN:</p>
+                          <div className="flex gap-1 flex-wrap mt-1">
+                            {selectedComment.bad_words.map(w => (
+                              <span key={w} className="px-2 py-0.5 bg-yellow-200 text-yellow-800 rounded-md text-[10px] font-bold">"{w}"</span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {isClean && !hasBadWords && (
+                        <p className="mt-2 text-[11px] text-green-600 font-medium">✓ Không phát hiện nội dung vi phạm</p>
+                      )}
+                    </div>
+
+                    {/* Right panel — displayed content */}
+                    <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
+                      <p className="text-xs font-bold text-emerald-600 uppercase mb-2">NỘI DUNG HIỂN THỊ TRÊN BLOG</p>
+                      <p className="text-emerald-900 font-medium text-sm">
+                        {selectedComment.status === 'blocked' ? (
+                          <span className="text-slate-400 italic">Đã bị chặn hoàn toàn, không hiển thị trên blog.</span>
+                        ) : (
+                          selectedComment.displayed_text || selectedComment.content
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
 
             {/* Modal Footer Actions */}
